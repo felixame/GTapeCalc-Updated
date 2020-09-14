@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<TITLE>gtapecalc Help</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<CENTER><A HREF="http://gtapecalc.sourceforge.net"><IMG SRC="gtapecalc-text.png" WIDTH="241" HEIGHT="70" BORDER="0" VSPACE="0" HSPACE="0" ALT="gtapecalc" ALIGN="middle"></A></CENTER>
+<BR><BR>
+
+<HR ALIGN="center">
+<A HREF="gtc-3.html">Next</A> <A HREF="gtc-1.html">Previous</A> <A HREF="index.html">Contents</A>
+<HR ALIGN="center" >
+
+<CENTER><H1>Installation</H1></CENTER>
+<P>
+
+To install gtapecalc you will need to download the source code 
+and unpack the file with a command like 'tar -xvzf gtapecalc-0.3.x'.
+<P>
+Change into the newly created directory and enter the command 
+'./configure'. The configure script checks some things about 
+your system and creates the Makefiles that will build the program.
+<P>
+ If all goes well with configure you next type 'make'  and If there 
+are no problems with make then you need to use 'make install' 
+to install the program and it's associated files to their respective 
+locations. You will need to use the root account on your system to
+install the program into the default location.
+<P>
+The default location for gtapecalc files is /usr/local which means that 
+a directory "/usr/local/share/gtapecalc" will be created when installing 
+to hold the images and docs that gtapecalc uses, and put the excecutable 
+in "/usr/local/bin". This location can be changed with an option to configure
+ (-- prefix) so that you can install these files anywhere you want.
+<P>
+So if you want to want to install the files to say your home directory 
+because you don't have root access you would use the command
+'configure --prefix=/home/my_home_dir'. This will create the directories
+"/home/my_home_dir/share/gtapecalc" and "/home/my_home_dir/bin" to 
+install the files to.
+<P>
+There are other less used options to configure that can be listed with the
+command './configure --help'.
+<P>
+
+<H3><A NAME="ss2.1"></A>2.1 Upgrading</H3>
+If you are upgrading from a version prior to 1.1 then it is recommended that
+you delete the <STRONG>.gtapecalcrc</STRONG> and <STRONG>.gtapecalcgtkrc</STRONG>
+files from your home directory. Gtk2 has changed the way fonts are described so
+any font settngs in the old files will no longer work. It will not hurt anything
+for you to start the newer version with the old files, but you may get fonts that
+do not look so good. Instead of deleting the files you may also start the program
+with the old files and go to the preferences dialog and choose new fonts but it
+is generally better to delete the old files and start from the defaults.
+
+<HR ALIGN="center">
+<A HREF="gtc-3.html">Next</A> <A HREF="gtc-1.html">Previous</A> <A HREF="index.html">Contents</A>
+</BODY>
+</HTML>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+<TITLE>gtapecalc Help</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<CENTER><A HREF="http://gtapecalc.sourceforge.net"><IMG SRC="gtapecalc-text.png" WIDTH="241" HEIGHT="70" BORDER="0" VSPACE="0" HSPACE="0" ALT="gtapecalc" ALIGN="middle"></A></CENTER>
+<BR><BR>
+
+<HR ALIGN="center">
+<A HREF="gtc-4.html">Next</A> <A HREF="gtc-2.html">Previous</A> <A HREF="index.html">Contents</A>
+<HR ALIGN="center" >
+
+<CENTER><H1>Usage</H1></CENTER>
+<P>
+
+You can use gtapecalc just like you would most other calculators.
+The main difference is the output window that will record any calculations 
+that you enter. 
+<P>
+
+<H3><A NAME="ss3.1"></A>3.1 Adding Notes</H3>
+
+On each line in the output window you can add notes 
+by selecting the row with the mouse or the arrow keys and clicking in the
+'Notes' column of the selected row or by right clicking on the line that you
+want to add a note to and select 'Add Note' from the menu. A dialog will pop
+up where you can enter the note you want to add and click 'Insert' to add it
+to the line. You can also add notes by double-clicking on the line, selecting
+the line you want with the mouse and using the 'Edit-Add Note' menu entry or
+by using the arrow keys to highlight the row you want and the spacebar to
+select it.
+
+<H3><A NAME="ss3.2">3.2 User Preferences</A></H3>
+
+All user preferences can be set using the preferences dialog  which is accessed
+from the 'Edit' menu. They are saved in two files, .<STRONG>gtapecalcrc</STRONG> and 
+<STRONG>.gtapecalcgtkrc</STRONG> which are located in the users home directory. The 
+<STRONG>.gtapecalcrc</STRONG> file is for program specific configuration options, while 
+<STRONG>.gtapecalcgtkrc</STRONG> is for options that can be affected by different gtk 
+themes such as fonts for the buttons and output window. These files are only 
+generated when you click OK in the preferences dialog and are not needed 
+by gtapecalc to operate. They are overwritten every time you save a preference 
+so editing them manually is not recommended. If they don't exist, then the program
+will start with a default set of preferences which should be adequate for most 
+situations
+<P>
+
+<blockquote><H3>View</H3>
+<UL>
+	<LI><H4><A NAME="ss3.2.1">3.2.1 Precision</A></H4>
+	The Precision option sets the calculator's precision. Any changes made in the 
+	<STRONG>Preferences</STRONG> dialog will be saved and used the next time the 
+	program is run. Precision can also be set using the options <STRONG>View</STRONG> 
+	in the view menu. Changes made here will not be saved for the next session.
+	<P>
+
+	<LI><H4><A NAME="ss3.2.2">3.2.2 Show Column Headers</A></H4>
+	Show or hide the column headers in the Tape Output window.
+	<P>
+		
+	<LI><H4><A NAME="ss3.2.3">3.2.3 Save Current Window Size</A></H4>
+	Save the current size of the program window along with the sizes of the individual panes.
+	So if you would like to see only the output window and not the buttons, resize the panes 
+	to show only the output window and use this option to make gtapecalc start this way all 
+	the time.
+	<P>
+</UL>
+
+<H3>Fonts</H3>
+<UL>
+	<LI><H4><A NAME="ss3.2.4">3.2.4 Calculator Font</A></H4>
+	Sets the font for the calculator display. Currently the display does not resize itself to account 
+	for different sized fonts, so choosing a font that is too large for the display may result in 
+	numbers not being visible.
+	<P>
+
+	<LI><H4><A NAME="ss3.2.5">3.2.5 Tape Font</A></H4>
+	Sets the font for the output window.
+	<P>
+
+	<LI><H4><A NAME="ss3.2.6">3.2.6 Button Font</A></H4>
+	Sets the font for the calculator buttons.
+	<P>
+	<EM>(Note)</EM> The system used for setting fonts is something of a 
+	tradeoff between being flexible for both the user and with Gtk themes. The 
+	problem is that sometimes the fonts aren't always updated correctly-or the 
+	theme isn't always updated correctly. However, when the program is 
+	restarted the correct font and theme will be shown.
+	<P>
+</UL>
+
+<H3>Printing</H3>
+<UL>
+
+	<LI><H4><A NAME="ss3.2.7">3.2.7 Print Command</A></H4>
+	Use this option to set the name of the printer command for your system. The default is 
+	<STRONG>lpr</STRONG> so for most systems this should be fine.
+	<P>
+
+	<LI><H4><A NAME="ss3.2.8">3.2.8 Page Width</A></H4>
+	Sets the width of the page to be printed in characters. Use this option to adjust the width of 
+	the printed page.
+	<P>
+
+	<LI><H4><A NAME="ss3.2.9">3.2.9 Column Width</A></H4>
+	Sets the width of the <STRONG>Notes</STRONG> column. Use this option to balance out 
+	the widths of the printed columns to your personal preference. The default setting is one-
+	half the <STRONG>Page Width</STRONG> setting.
+	<P>
+</UL>
+</blockquote>
+<HR ALIGN="center">
+<A HREF="gtc-4.html">Next</A> <A HREF="gtc-2.html">Previous</A> <A HREF="index.html">Contents</A>
+</BODY>
+</HTML>
