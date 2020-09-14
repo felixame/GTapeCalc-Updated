@@ -636,7 +636,8 @@ void print_file(GtkWidget *widget, gpointer data)
   else {
     char temp_name[L_tmpnam];
 
-    temp_file = tmpnam(temp_name);
+    // Changed tmpnam() to mkdtemp().
+    temp_file = mkdtemp(temp_name);
   }
 
   fname = fopen(temp_file, "w");
