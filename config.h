@@ -2,8 +2,6 @@
 /* Define if the C compiler supports BOOL */
 /* #undef HAVE_BOOL */
 
-#define VERSION "1.1.1"
-
 #define PACKAGE "gtapecalc"
 
 #define PIXMAP_DIR "/usr/local/share/gtapecalc/pixmaps/"
@@ -44,4 +42,4 @@
 #define PACKAGE_VERSION ""
 
 /* Version number of package */
-#define VERSION "1.1.1"
+#define VERSION "master"

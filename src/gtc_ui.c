@@ -257,13 +257,13 @@ gint make_ui(CalcWindow *cwindow)
   if (!gdk_color_alloc(cmap, &event_box_bg_color)) {
     g_error("couldn't allocate event box background color");
   }
+  else {
+    event_box_style = gtk_style_copy (gtk_widget_get_style (event_box));
+    event_box_style->bg[GTK_STATE_NORMAL] = event_box_bg_color;
 
-  event_box_style = gtk_style_copy (gtk_widget_get_style (event_box));
-  /*style = gtk_style_new ();*/
-  event_box_style->bg[GTK_STATE_NORMAL] = event_box_bg_color;
-
-  gtk_widget_set_style (GTK_WIDGET(event_box), event_box_style);
-  gtk_style_unref (event_box_style);
+    gtk_widget_set_style (GTK_WIDGET(event_box), event_box_style);
+    gtk_style_unref (event_box_style);
+  }
 
   gtk_widget_show (event_box);
 
@@ -283,22 +283,17 @@ gint make_ui(CalcWindow *cwindow)
   if (!gdk_color_alloc(cmap, &entry_text_color)) {
     g_error("couldn't allocate entry text color");
   }
+  else {
+    entry_style = gtk_style_copy (gtk_widget_get_style (cwindow->entry));
+    entry_style->text[GTK_STATE_NORMAL] = entry_text_color;
 
-  entry_style = gtk_style_copy (gtk_widget_get_style (cwindow->entry));
-  /*style = gtk_style_new ();*/
-  entry_style->text[GTK_STATE_NORMAL] = entry_text_color;
+    gtk_widget_set_style (GTK_WIDGET(cwindow->entry), entry_style);
+    gtk_style_unref (entry_style);
+  }
 
-  gtk_widget_set_style (GTK_WIDGET(cwindow->entry), entry_style);
-  gtk_style_unref (entry_style);
-
-  /*gtk_widget_set_name (entry, "entry_widget");*/
   gtk_widget_show (cwindow->entry);
 
   if (prefs->entry_font_name[0] != '\0') {
-  	/*font_desc = pango_font_description_from_string (prefs->entry_font_name);
-   gtk_widget_modify_font (GTK_WIDGET(cwindow->entry), font_desc);
-   pango_font_description_free (font_desc);
-   */
    widget_font_load (cwindow->entry, prefs->entry_font_name);
     //entry_font = gdk_font_load (prefs->entry_font_name);
     /*style = gtk_style_new ();*/
@@ -345,41 +340,18 @@ gint make_ui(CalcWindow *cwindow)
 	                               G_CALLBACK(selection_changed),
 																 cwindow);
 
-  //gtk_clist_set_shadow_type (GTK_CLIST(cwindow->clist), GTK_SHADOW_ETCHED_IN);
-  //gtk_clist_set_column_width (GTK_CLIST(cwindow->clist), 0, 140);
-  //gtk_clist_set_column_width (GTK_CLIST(cwindow->clist), 1, 110);
-  //gtk_clist_set_column_width (GTK_CLIST(cwindow->clist), 2, 20);
-
-  /*gtk_clist_set_column_min_width (GTK_CLIST(cwindow->clist), 2, 20);*/
-
-
-  //gtk_clist_set_column_justification (GTK_CLIST(cwindow->clist), 0,
-	//  GTK_JUSTIFY_RIGHT);
-  //gtk_clist_set_column_justification (GTK_CLIST(cwindow->clist), 1,
-	//  GTK_JUSTIFY_RIGHT);
-  //gtk_clist_column_titles_passive (GTK_CLIST(cwindow->clist));
-
   gtk_container_add (GTK_CONTAINER(cwindow->scrolled_window), cwindow->clist);
 
   popup_menu = show_popup_menu (cwindow->clist);
 
-  //g_signal_connect (GTK_OBJECT(cwindow->clist), "select_row",
-	//	      G_CALLBACK(select_row),
-	//	      NULL);
   g_signal_connect (G_OBJECT(cwindow->clist), "row-activated",
 	                  G_CALLBACK(select_row),
 										cwindow);
 
-  /*gtk_signal_connect (GTK_OBJECT(cwindow->clist), "resize_column",
-		      GTK_SIGNAL_FUNC(clist_column_resize),
-		      NULL);*/
   g_signal_connect (GTK_OBJECT(cwindow->clist), "button-press-event",
 		      G_CALLBACK(mouse_click_check),
 		      GTK_OBJECT(popup_menu));
-  /* g_signal_connect_after (GTK_OBJECT(cwindow->clist), "size_allocate",
-		      G_CALLBACK(clist_column_resize),
-		      NULL);
-  */
+
   gtk_widget_show (cwindow->scrolled_window);
   gtk_widget_set_name (cwindow->clist, "output_window");
   gtk_widget_show (cwindow->clist);
@@ -388,19 +360,6 @@ gint make_ui(CalcWindow *cwindow)
 
   if (prefs->clist_font_name[0] != '\0') {
    widget_font_load (cwindow->clist, prefs->clist_font_name);
-
-    //fixed_font = gdk_font_load (prefs->clist_font_name);
-    //if (fixed_font) {
-
-      /*style = gtk_style_new ();*/
-      //style = gtk_style_copy (gtk_widget_get_style (GTK_WIDGET(cwindow->clist)));
-      //style->font = fixed_font;
-      //gtk_widget_set_style (GTK_WIDGET(cwindow->clist), style);
-      /*gtk_style_unref (style);*/
-    //}
-    //else
-      //g_warning ("Couldn't load font %s,\nusing default gtk font instead",
-      //           prefs->clist_font_name);
   }
 
   /* Statusbar **************************************************************/
@@ -491,24 +450,7 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
 
   if (cw->widget_vars->button_font_name[0] != 0) {
   	font_desc = pango_font_description_from_string (cw->widget_vars->button_font_name);
-
-    //button_font = gdk_font_load (cw->widget_vars->button_font_name);
-    //if (!button_font)
-      //g_warning ("Couldn't load font for buttons\n%s\nusing default gtk font instead",
-	      //cw->widget_vars->button_font_name);
   }
-  //else button_font = NULL;
-
-  /*
-     cmap = gdk_colormap_get_system();
-     button_color.red = 0xff00;
-     button_color.green = 0x8f00;
-     button_color.blue = 0x8000;
-     if (!gdk_color_alloc(cmap, &button_color)) {
-     g_error("couldn't allocate color");
-     }
-     else button_style->bg[GTK_STATE_NORMAL] = button_color;
-   */
 
   for (index = 0; index < cw->nbuttons; index++) {
 
@@ -536,9 +478,6 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
 	    G_CALLBACK(button_leave),
 	    NULL);
 
-    /*if (cw->button_list[index].label != "+" &&
-    	    cw->button_list[index].label != "=")
-    */
     if (strcmp (cw->button_list[index].label, "+") != 0 &&
         strcmp (cw->button_list[index].label, "=") != 0) {
 
@@ -567,18 +506,7 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
       button_label = GTK_WIDGET(button_container->data);
 
       gtk_widget_modify_font (GTK_WIDGET(button_label), font_desc);
-
-
-      //button_style = gtk_style_copy (gtk_widget_get_style (label));
-      //button_style->font = button_font;
-      //gtk_widget_set_style (GTK_WIDGET(label), button_style);
-	    // 2.0 Change
-      /*gtk_style_unref (button_style);*/
     }
-    /*else {
-      g_warning ("Couldn't load font for buttons\n%s\nusing default gtk font instead",
-      cw->widget_vars->button_font_name);
-    }*/
 
     gtk_widget_show (cw->button_list[index].widget);
 
@@ -592,11 +520,11 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
 GtkWidget *show_popup_menu (GtkWidget *clist)
 {
   static PopupMenuEntry popup_menu_items[] = {
-    {"Add Note",     G_CALLBACK(edit_tape_dialog)},
+    {"Add Note",    G_CALLBACK(edit_tape_dialog)},
     {"Delete Note", G_CALLBACK(remove_comment)},
-    {NULL,              NULL},
-    {"Insert Line",    G_CALLBACK(insert_row)},
-    {"Delete Line",   G_CALLBACK(dlg_delete_line)}
+    {NULL,          NULL},
+    {"Insert Line", G_CALLBACK(insert_row)},
+    {"Delete Line", G_CALLBACK(dlg_delete_line)}
   };
 
   GtkWidget *p_menu;
@@ -678,7 +606,6 @@ make_columns (GtkTreeView *tree)
   column = gtk_tree_view_column_new_with_attributes ("", renderer,
 	                                                   "text", COLUMN_OPERATOR,
 	                                                   NULL);
-	/*gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED); */
-	/*gtk_tree_view_column_set_max_width (column, 20);*/
+
   gtk_tree_view_append_column (GTK_TREE_VIEW(tree), column);
 }

@@ -29,13 +29,6 @@ enum
   N_COLUMNS
 };
 
-/*extern gint   pane_width;
-extern char *entry_font_name;
-extern char *clist_font_name;
-extern char *button_font_name;
-extern gint   column_title_show;
-*/
-
 gint make_ui (CalcWindow *cwindow);
 
 void make_buttons(GtkWidget *table, CalcWindow *cw);

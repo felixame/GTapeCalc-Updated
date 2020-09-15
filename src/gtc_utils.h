@@ -43,7 +43,7 @@ gchar *strip_end_chars (gchar *strip_str, gchar strip_char);
 /* be sure to free() returned string when done with it ***************** */
 gchar *add_commas (gchar *num_string);
 
-char *format_num(double total_to_format, char val_str[], int d_places);
+char *format_num (double total_to_format, char val_str[], int d_places);
 
 void widget_font_load (GtkWidget *widget, gchar *font_name);
 
