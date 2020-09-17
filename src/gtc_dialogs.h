@@ -50,13 +50,14 @@ struct _DialogItem
 
 #define QUESTION_PIX "question.xpm"
 
-void edit_tape_dialog (GtkWidget *widget, gpointer data);
+void edit_tape_dialog (GtkWidget *widget);
 GtkWidget* dialog_new (GtkWidget *widget, DialogItem *dlg, ButtonItem *btns);
 void dlg_error_msg (GtkWidget *widget, gchar *err_str);
-void dlg_delete_line (GtkWidget *widget, gpointer data);
-void show_about(GtkWidget *widget, gpointer data);
-void dlg_preferences_show (GtkWidget *widget, gpointer data);
-void dlg_print (GtkWidget *widget, gpointer data);
+void dlg_delete_line (GtkWidget *widget);
+void show_about(GtkWidget *widget);
+void dlg_preferences_show (GtkWidget *widget);
+void dlg_print (GtkWidget *widget);
+void dlg_set_radio_entry_insensitive (GtkWidget *widget);
 void dlg_font_select (GtkWidget *widget, gpointer entry);
 void dlg_get_font (GtkWidget *widget, gpointer data);
 void destroy_dialog(GtkWidget *widget, gpointer dlg);
