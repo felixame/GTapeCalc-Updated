@@ -80,7 +80,7 @@ struct _CalcWindow
   GtkWidget      *entry;
   GtkWidget      *clist;
   GtkWidget      *scrolled_window;
-  GtkItemFactory *item_factory;
+  //GtkItemFactory *item_factory;
   GtkWidget      *statusbar;
   gint           statusbar_id;
   gint           nbuttons;
@@ -93,13 +93,13 @@ struct _CalcWindow
 
 struct _CalcButton
 {
-  gchar         *label;
-  gint           column;   /* left / right attach */
-  gint           row;      /* top / bottom attach */
-  GtkWidget     *widget;
-  GtkItemFactoryCallback  sigfunc;
-  gchar         *data;
-  ButtonType     type;
+  gchar *label;
+  gint column;   /* left / right attach */
+  gint row;      /* top / bottom attach */
+  GtkWidget *widget;
+  //GtkItemFactoryCallback  sigfunc;
+  gchar *data;
+  ButtonType type;
 };
 
 struct _PopupMenuEntry

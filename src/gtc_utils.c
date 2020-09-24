@@ -27,14 +27,14 @@
 
 
 /* get a pointer to a widget from the toplevel window data 
-   set with gtk_object_set_data including dialogs which have a
+   set with g_object_set_data including dialogs which have a
    pointer to the toplevel window set in their data
 */
 gpointer get_data_from_toplevel (GtkWidget *widget, gchar *key)
 {
   gpointer data;
  
-  if (GTK_IS_DIALOG(widget) || GTK_IS_FILE_SELECTION(widget)) {
+  if (GTK_IS_DIALOG(widget) /*|| GTK_IS_FILE_SELECTION(widget)*/) {
     GtkWidget *twindow;
     
     twindow = get_widget_data (widget, "twindow");
@@ -55,7 +55,7 @@ GtkWidget *get_toplevel_widget (GtkWidget *widget)
     if (GTK_IS_MENU (widget))
       parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
     else
-      parent = widget->parent;
+      parent = gtk_widget_get_parent (widget);
     if (parent == NULL)
       break;
     widget = parent;
@@ -70,7 +70,7 @@ gpointer get_widget_data (GtkWidget *widget, gchar *key)
   gpointer data;
 
   toplevel = get_toplevel_widget (widget);
-  data = gtk_object_get_data (GTK_OBJECT(toplevel), key);
+  data = g_object_get_data (toplevel, key);
 
   return (data);
 }
@@ -83,7 +83,7 @@ ConfigVariable *get_widget_variables (GtkWidget *widget)
 
   twindow = get_toplevel_widget (widget);
 
-  vars = gtk_object_get_data (GTK_OBJECT(twindow), "vars");
+  vars = g_object_get_data (twindow, "vars");
   return (vars);
 }
 

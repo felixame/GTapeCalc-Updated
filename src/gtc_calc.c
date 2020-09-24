@@ -41,12 +41,9 @@ void parse_main_input (GtkWidget *widget, ButtonType btn_type)
   CalcType type;
   gchar *entry_data;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
-  /*char in_op;*/
 
-  gtk_label_get (GTK_LABEL(cw->entry), &entry_data);
+  entry_data = gtk_label_get_text (GTK_LABEL(cw->entry));
   strip_commas (entry_data);
-  /*if (cw->state->clear_entry = 1)
-    gtk_label_set (GTK_LABEL(cw->entry), "");*/
 
   if (btn_type >= BTN_X_SQUARED && btn_type <= BTN_PLUS_MINUS) {
     type = parse_sub_input (&subval, btn_type, entry_data);
@@ -182,7 +179,7 @@ void parse_output (GtkWidget *widget, CalcValues *values, CalcType type)
 	    sprintf (output, "%s", values->text);
 	  }
 	  else {
-	    gtk_label_set (GTK_LABEL(cw->entry), "");
+	    gtk_label_set_text (GTK_LABEL(cw->entry), "");
 	    format_num(values->val1, valstr, cw->widget_vars->precision);
 	    sprintf(output, "%s", valstr);               /* num1_op */
 	  }
@@ -269,7 +266,7 @@ void parse_output (GtkWidget *widget, CalcValues *values, CalcType type)
 	  cw->state->in_sub = 0;
 	  skip_output = 0;
 
-	  gtk_label_set (GTK_LABEL(cw->entry), "error");
+	  gtk_label_set_text (GTK_LABEL(cw->entry), "error");
 	  display_out (widget, "error", "");                    /* op_error */
 	  display_out (widget, "", "");
 	  break;
@@ -338,7 +335,7 @@ void parse_grouped_input (GtkWidget *widget, ButtonType btn_type)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
 
-  gtk_label_get (GTK_LABEL(cw->entry), &input);
+  input = gtk_label_get_text (GTK_LABEL(cw->entry));
 
   temp_string = (char *) malloc (strlen(input) * sizeof(char) + 1);
   memset (temp_string, '\0', sizeof(temp_string));
@@ -434,7 +431,6 @@ void parse_grouped_input (GtkWidget *widget, ButtonType btn_type)
 /* clears all data out of the variables ************************************/
 void clear(GtkWidget *widget, gpointer data)
 {
-  /*extern int entryflag;*/
   char *clear = "Clear   ";
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
@@ -443,7 +439,7 @@ void clear(GtkWidget *widget, gpointer data)
   mainval.val1 = mainval.val2 = mainval.total = 0;
   mainval.val1flag = 0;
 
-  gtk_label_set (GTK_LABEL(cw->entry), "0");
+  gtk_label_set_text (GTK_LABEL(cw->entry), "0");
   cw->state->clear_entry = 1;
   cw->state->have_sub = 0;
   cw->state->in_sub = 0;

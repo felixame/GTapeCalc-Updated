@@ -1,4 +1,4 @@
-gtkdep = dependency('gtk+-2.0')
+gtkdep = dependency('gtk+-3.0')
 
 sources = files(
 	'gtapecalc.c',

@@ -16,8 +16,6 @@
  ***************************************************************************/
 
 #include <gtk/gtk.h>
-#include <gdk/gdk.h>
-#include <gdk/gdkkeysyms.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -68,7 +66,7 @@ void column_toggle (GtkWidget *widget)
 /* sets the number of decimal places to output ******************************/
 void dec_select(GtkWidget *widget, char *n)
 {
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  /*CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
   gint i = atoi(n);
 
   if (GTK_CHECK_MENU_ITEM(widget)->active) {
@@ -79,7 +77,7 @@ void dec_select(GtkWidget *widget, char *n)
       else cw->widget_vars->precision = i;
     }
     else cw->state->misc_state = 0;
-  }
+  }*/
 }
 
 /* quit function that checks for changed files ****************************/
@@ -105,8 +103,7 @@ gint delete_event(GtkWidget *widget)
 void fp_toggle (GtkWidget *widget, gpointer data)
 {
   GtkWidget *window = (GtkWidget *)data;
-  GtkWidget *spinb = gtk_object_get_data (GTK_OBJECT(window),
-                                          "precision_spin");
+  GtkWidget *spinb = g_object_get_data (window, "precision_spin");
   gboolean state;
 
   state = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(widget));
@@ -158,7 +155,7 @@ void set_current_dir ()
 /* open a file_selection dialog and calls file_event **********************/
 void file_select(GtkWidget *widget, char *mode)
 {
-  GtkWidget *fs;
+  /*GtkWidget *fs;
   GtkWidget *twindow = get_toplevel_widget (widget);
 
   if (!strcmp(mode, "r")) {
@@ -196,7 +193,7 @@ void file_select(GtkWidget *widget, char *mode)
 			     "clicked", G_CALLBACK(gtk_widget_destroy),
 			     GTK_OBJECT(fs));
 
-  gtk_object_set_data (GTK_OBJECT(fs), "twindow", twindow);
+  g_object_set_data (GTK_OBJECT(fs), "twindow", twindow);
   gtk_widget_show (fs);
 
   if (!strcmp(mode, "r")) {
@@ -220,82 +217,82 @@ void file_select(GtkWidget *widget, char *mode)
 
       dialog_new (widget, &file_save_items, file_save_buttons);
     }
-  }
+  }*/
 }
 
 
 /* opens a file *************************************************************/
 void file_open(GtkWidget *widget, gpointer data)
 {
-  const gchar *temp;
-  gchar *fn = 0;
-  FILE *fname;
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  /* const gchar *temp; */
+  /* gchar *fn = 0; */
+  /* FILE *fname; */
+  /* CalcWindow *cw = get_data_from_toplevel (widget, "cwindow"); */
 
-  if (GTK_IS_FILE_SELECTION(widget )) {
-    temp = gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget));
-    fn = g_strdup (temp);
-  }
-  else
-  	fn = g_strdup((gchar *)data);
+  /* if (GTK_IS_FILE_SELECTION(widget )) { */
+  /*   temp = gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)); */
+  /*   fn = g_strdup (temp); */
+  /* } */
+  /* else */
+  /* 	fn = g_strdup((gchar *)data); */
 
-  if (!fn) {
-    g_warning ("No file name");
-    return;
-  }
+  /* if (!fn) { */
+  /*   g_warning ("No file name"); */
+  /*   return; */
+  /* } */
 
-  fname = fopen(fn, "r");
+  /* fname = fopen(fn, "r"); */
 
-  if (fname) {
+  /* if (fname) { */
 
-    gint row = 0;
-    char buff[3][256];
-    char *buffer[3];
-    gchar *index;
+  /*   gint row = 0; */
+  /*   char buff[3][256]; */
+  /*   char *buffer[3]; */
+  /*   gchar *index; */
 
-    new_tape_event(cw->clist);
+  /*   new_tape_event(cw->clist); */
 
-    while (fgets (buff[0], 256, fname)) {
-      buffer[0] = buff[0];
-      if ((index = strchr (buff[0], '\n')))
-			*index = 0;
+  /*   while (fgets (buff[0], 256, fname)) { */
+  /*     buffer[0] = buff[0]; */
+  /*     if ((index = strchr (buff[0], '\n'))) */
+		/* 	*index = 0; */
 
-      fgets (buff[1], 256, fname);
-      buffer[1] = buff[1];
-      if ((index = strchr (buff[1], '\n')))
-			*index = 0;
+  /*     fgets (buff[1], 256, fname); */
+  /*     buffer[1] = buff[1]; */
+  /*     if ((index = strchr (buff[1], '\n'))) */
+		/* 	*index = 0; */
 
-      fgets (buff[2], 256, fname);
-      buffer[2] = buff[2];
-      if ((index = strchr (buff[2], '\n')))
-			*index = 0;
+  /*     fgets (buff[2], 256, fname); */
+  /*     buffer[2] = buff[2]; */
+  /*     if ((index = strchr (buff[2], '\n'))) */
+		/* 	*index = 0; */
 
-      row = tlist_append (cw->clist, buffer);
-    }
+  /*     row = tlist_append (cw->clist, buffer); */
+  /*   } */
 
-    last_row = row;
-    set_current_file(fn);
-    set_current_dir ();
-    statusbar_update(widget, current_file, "");
-  }
-  else {
-    gchar *err_msg;
+  /*   last_row = row; */
+  /*   set_current_file(fn); */
+  /*   set_current_dir (); */
+  /*   statusbar_update(widget, current_file, ""); */
+  /* } */
+  /* else { */
+  /*   gchar *err_msg; */
 
-    err_msg = malloc((strlen(fn) + 32) * sizeof(char));
-    sprintf (err_msg, "Couldn't open file -\n%s",fn);
-    dlg_error_msg (widget, err_msg);
-    free (err_msg);
+  /*   err_msg = malloc((strlen(fn) + 32) * sizeof(char)); */
+  /*   sprintf (err_msg, "Couldn't open file -\n%s",fn); */
+  /*   dlg_error_msg (widget, err_msg); */
+  /*   free (err_msg); */
 
-    printf("Couldn't open file %s\n", fn);
-  }
+  /*   printf("Couldn't open file %s\n", fn); */
+  /* } */
 
-  set_file_saved (cw, TRUE);
+  /* set_file_saved (cw, TRUE); */
 
-  if (fn)
-    g_free (fn);
+  /* if (fn) */
+  /*   g_free (fn); */
 
-  if (GTK_IS_FILE_SELECTION(widget ))
-    gtk_widget_destroy (GTK_WIDGET(widget));
+  /* if (GTK_IS_FILE_SELECTION(widget )) */
+  /*   gtk_widget_destroy (GTK_WIDGET(widget)); */
 }
 
 /* void callback for file save event ****************************************/
@@ -307,49 +304,49 @@ void file_save_event_cb (GtkWidget *widget, gchar *data)
 /* check to see if a file exists before saving to it ************************/
 void file_save_as (GtkWidget *widget)
 {
-  FILE *fname;
-  const gchar *tname;
-  gchar *tempname;
-  GtkWidget *window = get_data_from_toplevel (widget, "twindow");
+ /*  FILE *fname; */
+ /*  const gchar *tname; */
+ /*  gchar *tempname; */
+ /*  GtkWidget *window = get_data_from_toplevel (widget, "twindow"); */
 
-  tname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget));
-  tempname = g_strdup (tname);
-  fname = fopen(tempname, "r");
+ /*  tname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)); */
+ /*  tempname = g_strdup (tname); */
+ /*  fname = fopen(tempname, "r"); */
 
-  if (fname) {
-    GtkWidget *dialog;
-    gchar *message;
+ /*  if (fname) { */
+ /*    GtkWidget *dialog; */
+ /*    gchar *message; */
 
-    fclose (fname);
-    g_warning ("File %s already exists", tempname);
-    message = g_strdup_printf ("%s\n already exists\n\nOverwrite the existing file ?",
-	    tempname);
-    if (message) {
-      DialogItem dlg_items = {
-	NULL,
-	300, 150,
-	TRUE,
-	"Warning!",
-	GTK_STOCK_DIALOG_WARNING,
-	message,
-	2
-      };
-      ButtonItem dlg_buttons[] = {
-	{NULL, GTK_STOCK_OK, G_CALLBACK(file_save_event_cb), FALSE},
-	{NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog), TRUE}
-      };
-      dialog = dialog_new (widget, &dlg_items, dlg_buttons);
-      gtk_object_set_data (GTK_OBJECT(dialog), "gfree_data", tempname);
-      g_free (message);
-      gtk_widget_destroy (widget);
-      return;
-    }
-  }
-  else {
-    file_save_event (window, tempname);
-  }
-  g_free (tempname);
-  gtk_widget_destroy (widget);
+ /*    fclose (fname); */
+ /*    g_warning ("File %s already exists", tempname); */
+ /*    message = g_strdup_printf ("%s\n already exists\n\nOverwrite the existing file ?", */
+	/*     tempname); */
+ /*    if (message) { */
+ /*      DialogItem dlg_items = { */
+	/* NULL, */
+	/* 300, 150, */
+	/* TRUE, */
+	/* "Warning!", */
+	/* GTK_STOCK_DIALOG_WARNING, */
+	/* message, */
+	/* 2 */
+ /*      }; */
+ /*      ButtonItem dlg_buttons[] = { */
+	/* {NULL, GTK_STOCK_OK, G_CALLBACK(file_save_event_cb), FALSE}, */
+	/* {NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog), TRUE} */
+ /*      }; */
+ /*      dialog = dialog_new (widget, &dlg_items, dlg_buttons); */
+ /*      g_object_set_data (dialog, "gfree_data", tempname); */
+ /*      g_free (message); */
+ /*      gtk_widget_destroy (widget); */
+ /*      return; */
+ /*    } */
+ /*  } */
+ /*  else { */
+ /*    file_save_event (window, tempname); */
+ /*  } */
+ /*  g_free (tempname); */
+ /*  gtk_widget_destroy (widget); */
 }
 
 
@@ -361,7 +358,7 @@ int file_save_event(GtkWidget *widget, gchar *data)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   if (GTK_IS_DIALOG(widget)) {
-    name = gtk_object_get_data (GTK_OBJECT(widget), "gfree_data");
+    name = g_object_get_data (widget, "gfree_data");
     if (!name)
       name = g_strdup (current_file);
     fname = fopen(name, "w");
@@ -526,7 +523,7 @@ void file_save_before_exit (GtkWidget *widget)
   if (GTK_IS_DIALOG(widget)) {
     GtkWidget *twindow;
 
-    twindow = gtk_object_get_data (GTK_OBJECT(widget), "twindow");
+    twindow = g_object_get_data (widget, "twindow");
     ret_val = file_save_event (twindow, NULL);
     gtk_widget_destroy (GTK_WIDGET(widget));
   }
@@ -550,38 +547,38 @@ void print_file_cb (GtkWidget *widget, gpointer data)
     options->preview = 1;
   else options->preview = 0;
 
-  rbutton = gtk_object_get_data (GTK_OBJECT(window), "printer_button");
+  rbutton = g_object_get_data (window, "printer_button");
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(rbutton))) {
-    entry = gtk_object_get_data (GTK_OBJECT(rbutton), "entry");
+    entry = g_object_get_data (rbutton, "entry");
     options->print_command = g_strdup (gtk_entry_get_text (GTK_ENTRY(entry)));
     options->to_file = 0;
   }
 
-  rbutton = gtk_object_get_data (GTK_OBJECT(window), "print_file_button");
+  rbutton = g_object_get_data (window, "print_file_button");
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(rbutton))) {
-    entry = gtk_object_get_data (GTK_OBJECT(rbutton), "entry");
+    entry = g_object_get_data (rbutton, "entry");
     options->to_file_name = g_strdup (gtk_entry_get_text (GTK_ENTRY(entry)));
     options->to_file = 1;
   }
 
-  rbutton = gtk_object_get_data (GTK_OBJECT(window), "no_header_button");
+  rbutton = g_object_get_data (window, "no_header_button");
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(rbutton)))
     options->print_header = 0;
   else options->print_header = 1;
 
   if (options->print_header) {
-    rbutton = gtk_object_get_data (GTK_OBJECT(window), "custom_header_button");
+    rbutton = g_object_get_data (window, "custom_header_button");
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(rbutton))) {
-      entry = gtk_object_get_data (GTK_OBJECT(rbutton), "entry");
+      entry = g_object_get_data (rbutton, "entry");
       options->header = g_strdup (gtk_entry_get_text (GTK_ENTRY(entry)));
       options->custom_header = 1;
     }
     else
       options->header = g_strdup (g_path_get_basename (current_file));
   }
-  entry = gtk_object_get_data (GTK_OBJECT(window), "page_width_entry");
+  entry = g_object_get_data (window, "page_width_entry");
   options->page_width = atoi (gtk_entry_get_text (GTK_ENTRY(entry)));
-  entry = gtk_object_get_data (GTK_OBJECT(window), "column_width_entry");
+  entry = g_object_get_data (window, "column_width_entry");
   options->column_width = atoi (gtk_entry_get_text (GTK_ENTRY(entry)));
 
   print_file (window, options);
@@ -845,7 +842,7 @@ void insert_comment(GtkWidget *widget)
   GtkWidget *dlg_entry;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  dlg_entry = gtk_object_get_data (GTK_OBJECT(widget), "entry");
+  dlg_entry = g_object_get_data (widget, "entry");
 
   new_comment = gtk_entry_get_text (GTK_ENTRY(dlg_entry));
 
@@ -980,99 +977,93 @@ int key_event(GtkWidget *widget, gint keyval, gint is_pressed)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   switch (keyval) {
-      case GDK_parenleft:
-	  /*if (is_pressed)
-	    button_press(widget, GINT_TO_POINTER(BTN_PAREN_LEFT));
-	    return (0);*/
+      case GDK_KEY_parenleft:
 	  return (BTN_PAREN_LEFT);
-    case GDK_parenright:
-	  /*if (is_pressed)
-	    button_press (widget, GINT_TO_POINTER(BTN_PAREN_RIGHT));
-	    return (0);*/
+    case GDK_KEY_parenright:
 	  return (BTN_PAREN_RIGHT);
-    case GDK_BackSpace:
+    case GDK_KEY_BackSpace:
 	  if (is_pressed)
 	    entry_backspace(widget);
 	  return (-1);
-    case GDK_Delete:
+    case GDK_KEY_Delete:
 	  if (is_pressed)
-	    gtk_label_set (GTK_LABEL(cw->entry), "");
+	    gtk_label_set_text (GTK_LABEL(cw->entry), "");
 	  return (-1);
-    case GDK_KP_Decimal:
+    case GDK_KEY_KP_Decimal:
 	  return(BTN_DEC_POINT);
-    case GDK_KP_0:
+    case GDK_KEY_KP_0:
 	  return (BTN_ZERO);
-    case GDK_KP_1:
+    case GDK_KEY_KP_1:
 	  return (BTN_ONE);
-    case GDK_KP_2:
+    case GDK_KEY_KP_2:
 	  return (BTN_TWO);
-    case GDK_KP_3:
+    case GDK_KEY_KP_3:
 	  return (BTN_THREE);
-    case GDK_KP_4:
+    case GDK_KEY_KP_4:
 	  return (BTN_FOUR);
-    case GDK_KP_5:
+    case GDK_KEY_KP_5:
 	  return (BTN_FIVE);
-    case GDK_KP_6:
+    case GDK_KEY_KP_6:
 	  return (BTN_SIX);
-    case GDK_KP_7:
+    case GDK_KEY_KP_7:
 	  return (BTN_SEVEN);
-    case GDK_KP_8:
+    case GDK_KEY_KP_8:
 	  return (BTN_EIGHT);
-    case GDK_KP_9:
+    case GDK_KEY_KP_9:
 	  return (BTN_NINE);
-    case GDK_0:
+    case GDK_KEY_0:
 	  return (BTN_ZERO);
-    case GDK_1:
+    case GDK_KEY_1:
 	  return (BTN_ONE);
-    case GDK_2:
+    case GDK_KEY_2:
 	  return (BTN_TWO);
-    case GDK_3:
+    case GDK_KEY_3:
 	  return (BTN_THREE);
-    case GDK_4:
+    case GDK_KEY_4:
 	  return (BTN_FOUR);
-    case GDK_5:
+    case GDK_KEY_5:
 	  return (BTN_FIVE);
-    case GDK_6:
+    case GDK_KEY_6:
 	  return (BTN_SIX);
-    case GDK_7:
+    case GDK_KEY_7:
 	  return (BTN_SEVEN);
-    case GDK_8:
+    case GDK_KEY_8:
 	  return (BTN_EIGHT);
-    case GDK_9:
+    case GDK_KEY_9:
 	  return (BTN_NINE);
-    case GDK_period:
+    case GDK_KEY_period:
 	  return (BTN_DEC_POINT);
-    case GDK_KP_Enter:
+    case GDK_KEY_KP_Enter:
 	  return (BTN_EQUAL);
-    case GDK_Return:
+    case GDK_KEY_Return:
 	  return (BTN_EQUAL);
-    case GDK_equal:
+    case GDK_KEY_equal:
 	  return (BTN_EQUAL);
-    case GDK_KP_Add:
+    case GDK_KEY_KP_Add:
 	  return (BTN_PLUS);
-    case GDK_plus:
+    case GDK_KEY_plus:
 	  return (BTN_PLUS);
-    case GDK_KP_Subtract:
+    case GDK_KEY_KP_Subtract:
 	  return (BTN_MINUS);
-    case GDK_minus:
+    case GDK_KEY_minus:
 	  return (BTN_MINUS);
-    case GDK_KP_Multiply:
+    case GDK_KEY_KP_Multiply:
 	  return (BTN_MULTIPLY);
-    case GDK_asterisk:
+    case GDK_KEY_asterisk:
 	  return (BTN_MULTIPLY);
-    case GDK_KP_Divide:
+    case GDK_KEY_KP_Divide:
 	  return (BTN_DIVIDE);
-    case GDK_slash:
+    case GDK_KEY_slash:
 	  return (BTN_DIVIDE);
-    case GDK_percent:
+    case GDK_KEY_percent:
 	  return (BTN_PERCENT);
-    case GDK_A:
+    case GDK_KEY_A:
 	  return (BTN_CLEAR_ALL);
-    case GDK_a:
+    case GDK_KEY_a:
 	  return (BTN_CLEAR_ALL);
-    case GDK_C:
+    case GDK_KEY_C:
 	  return (BTN_CLEAR_ENTRY);
-    case GDK_c:
+    case GDK_KEY_c:
 	  return (BTN_CLEAR_ENTRY);
     default:
 	  return (-1);
@@ -1101,7 +1092,7 @@ void entry_backspace (GtkWidget *widget)
   gint len;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  gtk_label_get (GTK_LABEL(cw->entry), &current_num);
+  current_num = gtk_label_get_text (GTK_LABEL(cw->entry));
   strcpy(new_num, current_num);
 
   len = strlen(new_num);
@@ -1125,7 +1116,7 @@ void entry_backspace (GtkWidget *widget)
   strip_commas (new_num);
   ret_num = add_commas (new_num);
 
-  gtk_label_set (GTK_LABEL(cw->entry), ret_num);
+  gtk_label_set_text (GTK_LABEL(cw->entry), ret_num);
   free (ret_num);
 }
 
@@ -1134,7 +1125,7 @@ void entry_clear (GtkWidget *widget)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  gtk_label_set (GTK_LABEL(cw->entry), "");
+  gtk_label_set_text (GTK_LABEL(cw->entry), "");
   cw->state->in_sub = 0;
   cw->state->have_sub = 0;
 }
@@ -1151,11 +1142,11 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   if (cw->state->clear_entry) {
-    gtk_label_set(GTK_LABEL(cw->entry), "");
+    gtk_label_set_text(GTK_LABEL(cw->entry), "");
     cw->state->clear_entry = 0;
   }
 
-  gtk_label_get (GTK_LABEL(cw->entry), &current_num);
+  current_num = gtk_label_get_text (GTK_LABEL(cw->entry));
   if (strlen(current_num) < sizeof(new_num))
     strcpy(new_num, current_num);
   else {
@@ -1175,12 +1166,12 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
   if (!cw->state->in_sub)
     num_to_show = add_commas (new_num);
 
-  gtk_label_set (GTK_LABEL(cw->entry), "");
+  gtk_label_set_text (GTK_LABEL(cw->entry), "");
   if (!cw->state->in_sub) {
-    gtk_label_set (GTK_LABEL(cw->entry), num_to_show);
+    gtk_label_set_text (GTK_LABEL(cw->entry), num_to_show);
     free (num_to_show);
   }
-  else gtk_label_set (GTK_LABEL(cw->entry), new_num);
+  else gtk_label_set_text (GTK_LABEL(cw->entry), new_num);
 }
 
 void entry_show_total(GtkWidget *widget, double total)
@@ -1190,8 +1181,8 @@ void entry_show_total(GtkWidget *widget, double total)
 
   format_num(total, totalstr, cw->widget_vars->precision);
 
-  gtk_label_set (GTK_LABEL(cw->entry), "");
-  gtk_label_set (GTK_LABEL(cw->entry), totalstr);
+  gtk_label_set_text (GTK_LABEL(cw->entry), "");
+  gtk_label_set_text (GTK_LABEL(cw->entry), totalstr);
   cw->state->clear_entry = 1;
 }
 
@@ -1208,13 +1199,11 @@ void button_press(GtkWidget *widget, ButtonType *data)
     return;
   }
 
-  /*if (*data == BTN_PAREN_LEFT || *data == BTN_PAREN_RIGHT)*/
   if (*data == BTN_PAREN_LEFT) {
-  	gtk_label_set (GTK_LABEL(cw->entry), "");
+  	gtk_label_set_text (GTK_LABEL(cw->entry), "");
     cw->state->in_sub = 1;
   }
 
-  /*if ((isdigit(*data)) || (*data == '.') || cw->state->in_sub == 1) {*/
   if ((*data >= BTN_ZERO && *data <= BTN_DEC_POINT) ||
        cw->state->in_sub == 1) {
     gchar *numb = get_button_data (cw->button_list, *data);
@@ -1237,7 +1226,7 @@ void button_press(GtkWidget *widget, ButtonType *data)
 /* load the options from the preferences dialog ****************************/
 void load_dialog_options (GtkWidget *widget)
 {
-  GList *toplevels;
+  /*GList *toplevels;
   const gchar *tname;
   gchar *name;
   gint i;
@@ -1247,10 +1236,10 @@ void load_dialog_options (GtkWidget *widget)
   GtkWidget *data_widget = get_data_from_toplevel (widget, "twindow");
   CalcWindow *cw = get_data_from_toplevel (data_widget, "cwindow");
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "precision_spin");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "precision_spin");
   i = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON(data_widget));
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "fp_checkbutton");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "fp_checkbutton");
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(data_widget))) {
     temp_widget = gtk_item_factory_get_widget (cw->item_factory,
 	    "/View/Floating Point");
@@ -1269,7 +1258,7 @@ void load_dialog_options (GtkWidget *widget)
     cw->widget_vars->precision = i;
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "show_headers");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "show_headers");
   temp_widget = gtk_item_factory_get_widget (cw->item_factory, "/View/Show Headers");
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_widget))) {
     if (!cw->widget_vars->column_title_show) {
@@ -1284,7 +1273,7 @@ void load_dialog_options (GtkWidget *widget)
     }
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "save_win_check");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "save_win_check");
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_widget))) {
     gint x, y;
 
@@ -1295,7 +1284,7 @@ void load_dialog_options (GtkWidget *widget)
     cw->widget_vars->pane_width = (x + 14);
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "entry_font");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "entry_font");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
 
   if (name[0] != '\0') {
@@ -1307,7 +1296,7 @@ void load_dialog_options (GtkWidget *widget)
     g_free (name);
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "tape_font");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "tape_font");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
   if (tname[0] != '\0') {
     name = g_strdup (tname);
@@ -1325,7 +1314,7 @@ void load_dialog_options (GtkWidget *widget)
     }
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "button_font");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "button_font");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
   if (tname[0] != '\0') {
 
@@ -1333,11 +1322,6 @@ void load_dialog_options (GtkWidget *widget)
   name = g_strdup (tname);
   cw->widget_vars->button_font_name = config_load_var
     (cw->widget_vars->button_font_name, name);
-  /*font = gdk_font_load (cw->widget_vars->button_font_name);
-
-    if (font) {
-    gint i;
-  */
   for (i = 0; i < cw->nbuttons; i++) {
     container = gtk_container_children (GTK_CONTAINER(cw->button_list[i].widget));
     label = GTK_WIDGET(container->data);
@@ -1345,8 +1329,7 @@ void load_dialog_options (GtkWidget *widget)
     //style = gtk_style_copy (gtk_widget_get_style (cw->window));
     //style->font = font;
     //gtk_widget_set_style (GTK_WIDGET(label), style);
-    /*gtk_style_unref (style);*/
-    /*gtk_widget_hide (GTK_WIDGET(cw->button_list[i].widget));*/
+
     gtk_widget_show (GTK_WIDGET(cw->button_list[i].widget));
   }
   //}
@@ -1354,14 +1337,14 @@ void load_dialog_options (GtkWidget *widget)
   //                cw->widget_vars->clist_font_name);
   g_free (name);
   }
-  /*else cw->widget_vars->button_font_name = "";*/
+
   else {
     if (cw->widget_vars->button_font_name) {
       free (cw->widget_vars->button_font_name);
     }
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "print_command");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "print_command");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
   if (tname) {
     name = g_strdup (tname);
@@ -1374,25 +1357,15 @@ void load_dialog_options (GtkWidget *widget)
     cw->widget_vars->print_command = PRINT_COMMAND;
   }
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "page_width");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "page_width");
   i = atoi (gtk_entry_get_text(GTK_ENTRY(data_widget)));
   cw->widget_vars->page_width = i;
 
-  data_widget = gtk_object_get_data (GTK_OBJECT(widget), "column_width");
+  data_widget = g_object_get_data (GTK_OBJECT(widget), "column_width");
   i = atoi (gtk_entry_get_text(GTK_ENTRY(data_widget)));
   cw->widget_vars->column_width = i;
 
   config_write_rc_file (cw->widget_vars);
-  /*rc_read = gtk_rc_reparse_all ();*/
-  /*g_message ("rc_read = %d", rc_read);*/
-  /*gtk_widget_reset_rc_styles (GTK_WIDGET(cw->clist));*/
-
-  /*for (i = 0; i < cw->nbuttons; i++) {*/
-  /*container = gtk_container_children (GTK_CONTAINER(cw->button_list[i].widget));
-    label = GTK_WIDGET(container->data);*/
-  /*gtk_widget_reset_rc_styles (cw->button_list[i].widget);
-
-    }*/
 
   if (gtk_rc_reparse_all ())
     {
@@ -1410,7 +1383,8 @@ void load_dialog_options (GtkWidget *widget)
       }
       g_list_free (toplevels);
     }
-  destroy_dialog (widget, NULL);
+
+  destroy_dialog (widget, NULL);*/
 }
 
 /* Determine in clist mouse clicks ******************************************/

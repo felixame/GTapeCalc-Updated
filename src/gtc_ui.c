@@ -29,12 +29,11 @@
 #include "gtc_prefs.h"
 #include "gtc_utils.h"
 
-static GtkTreeModel *
-make_model (void);
+static GtkTreeModel *make_model (void);
 
-static void
-make_columns (GtkTreeView *tree);
+static void make_columns (GtkTreeView *tree);
 
+/*
 static GtkItemFactoryEntry menu_items[] = {
   {"/_File",                 NULL,         0,                 0, "<Branch>" },
   {"/File/_New",             "<control>N", file_close_cb,     0, NULL },
@@ -62,54 +61,52 @@ static GtkItemFactoryEntry menu_items[] = {
   {"/View/_0.00",            NULL,        dec_select,        0, "/View/Floating Point" },
   {"/View/0_.0000",          NULL,        dec_select,        0, "/View/Floating Point" },
   {"/View/_Custom",          NULL,         dec_select,        0, "/View/Floating Point" },
-  /*{"/_Test",                 NULL,         0,                 0, "<Branch>" },
-  {"/Test/_Test Size",       NULL,         get_pane_size,     0, NULL },
-  {"/Test/_Default",         NULL,         de_fault,           0, NULL },*/
   {"/_Help",                 NULL,         0,                 0, "<LastBranch>" },
   {"/Help/_Contents",        NULL,         show_help,         0, NULL},
   {"/Help/_About",           NULL,         show_about,        0, NULL }
 };
+*/
 
-static gchar *callback_data[] = {
-  0,    /* /File                   */
-  0,    /* /File/New               */
-  "r",  /* /File/Open              */
-  0,    /* /File/Save              */
-  "w",  /* /File/Save_As           */
-  0,    /* /File/sep1              */
-  0,    /* /File/Print             */
-  0,    /* /File/Close             */
-  0,    /* /File/sep2              */
-  0,    /* /File/Quit              */
-  0,    /* /File/sep3              */
-  0,    /* /Edit                   */
-  0,    /* /Edit/Add Comment       */
-  0,    /* /Edit/Remove Comment    */
-  0,    /* /Edit/sep4              */
-  0,    /* /Edit/Insert Line       */
-  0,    /* /Edit/Remove Line       */
-  0,    /* /Edit/sep5              */
-  0,    /* /Edit/Preferences       */
-  0,    /* /View                   */
-  0,    /* /View/Show Columns      */
-  0,    /* /View/sep               */
-  "-1",  /* /View/Floating Point    */
-  "2",  /* /View/0.00              */
-  "4",  /* /View/0.0000            */
-  "-2", /* /View/Custom            */
+/* static gchar *callback_data[] = { */
+/*   0,     */ /* /File                   */
+/*   0,     */ /* /File/New               */
+/*   "r",   */ /* /File/Open              */
+/*   0,     */ /* /File/Save              */
+/*   "w",   */ /* /File/Save_As           */
+/*   0,     */ /* /File/sep1              */
+/*   0,     */ /* /File/Print             */
+/*   0,     */ /* /File/Close             */
+/*   0,     */ /* /File/sep2              */
+/*   0,     */ /* /File/Quit              */
+/*   0,     */ /* /File/sep3              */
+/*   0,     */ /* /Edit                   */
+/*   0,     */ /* /Edit/Add Comment       */
+/*   0,     */ /* /Edit/Remove Comment    */
+/*   0,     */ /* /Edit/sep4              */
+/*   0,     */ /* /Edit/Insert Line       */
+/*   0,     */ /* /Edit/Remove Line       */
+/*   0,     */ /* /Edit/sep5              */
+/*   0,     */ /* /Edit/Preferences       */
+/*   0,     */ /* /View                   */
+/*   0,     */ /* /View/Show Columns      */
+/*   0,     */ /* /View/sep               */
+/*   "-1",   */ /* /View/Floating Point    */
+/*   "2",   */ /* /View/0.00              */
+/*   "4",   */ /* /View/0.0000            */
+/*   "-2",  */ /* /View/Custom            */
   /*0,*/    /* /Test               */
   /*0,*/    /* /Test/Test Size     */
   /*0,*/    /* /Test/Default       */
-  0,    /* /Help                   */
-  0,    /* /Help/Contents          */
-  0     /* /Help/About             */
-};
-//static char squared[] = {32, 120, 178, 32, '\0'};
-//static char p_minus[] = {32, 177, 32, '\0'};
+/*   0,     */ /* /Help                   */
+/*   0,     */ /* /Help/Contents          */
+/*   0      */ /* /Help/About             */
+/* }; */
 
+void dummy_button_callback() { printf("sigfunc callback called from button press.\n"); return; }
 
 gint make_ui(CalcWindow *cwindow)
 {
+  /*//Button array w/ GtkItemFactoryCallback entry.
   static CalcButton button_list[] = {
     {"(",    0, 0, NULL, NULL,       "(",   BTN_PAREN_LEFT},
     {")",    1, 0, NULL, NULL,       ")",   BTN_PAREN_RIGHT},
@@ -123,16 +120,11 @@ gint make_ui(CalcWindow *cwindow)
     {"9",    3, 1, NULL, NULL,       "9",   BTN_NINE},
     {"+",    4, 1, NULL, NULL,       " + ",   BTN_PLUS},
 
-    // In 2020 GTK seems to be confused by byte defined unicode chars.
-    // Easier to just copy the character into the IDE and let the compiler
-    // figure it out.
-    //{squared,0, 2, NULL, NULL,       squared, BTN_X_SQUARED},
     {"x²",   0, 2, NULL, NULL,       "x²", BTN_X_SQUARED},
     {"4",    1, 2, NULL, NULL,       "4",   BTN_FOUR},
     {"5",    2, 2, NULL, NULL,       "5",   BTN_FIVE},
     {"6",    3, 2, NULL, NULL,       "6",   BTN_SIX},
 
-    //{"+/-",  0, 3, NULL, NULL,        p_minus,  BTN_PLUS_MINUS},
     {"±",    0, 3, NULL, NULL,        "±",  BTN_PLUS_MINUS},
     {"1",    1, 3, NULL, NULL,        "1",  BTN_ONE},
     {"2",    2, 3, NULL, NULL,        "2",  BTN_TWO},
@@ -143,6 +135,36 @@ gint make_ui(CalcWindow *cwindow)
     {"CE",   1, 4, NULL, entry_clear, "CE", BTN_CLEAR_ENTRY},
     {"0",    2, 4, NULL, NULL,        "0",  BTN_ZERO},
     {".",    3, 4, NULL, NULL,        ".",  BTN_DEC_POINT}
+  };*/
+
+    static CalcButton button_list[] = {
+    {"(",    0, 0, NULL, "(",   BTN_PAREN_LEFT},
+    {")",    1, 0, NULL, ")",   BTN_PAREN_RIGHT},
+    {"/",    2, 0, NULL, " / ",   BTN_DIVIDE},
+    {"x",    3, 0, NULL, " x ",   BTN_MULTIPLY},
+    {"-",    4, 0, NULL, " - ",   BTN_MINUS},
+
+    {"%",    0, 1, NULL, " % ",   BTN_PERCENT},
+    {"7",    1, 1, NULL, "7",   BTN_SEVEN},
+    {"8",    2, 1, NULL, "8",   BTN_EIGHT},
+    {"9",    3, 1, NULL, "9",   BTN_NINE},
+    {"+",    4, 1, NULL, " + ",   BTN_PLUS},
+
+    {"x²",   0, 2, NULL, "x²", BTN_X_SQUARED},
+    {"4",    1, 2, NULL, "4",   BTN_FOUR},
+    {"5",    2, 2, NULL, "5",   BTN_FIVE},
+    {"6",    3, 2, NULL, "6",   BTN_SIX},
+
+    {"±",    0, 3, NULL, "±",  BTN_PLUS_MINUS},
+    {"1",    1, 3, NULL, "1",  BTN_ONE},
+    {"2",    2, 3, NULL, "2",  BTN_TWO},
+    {"3",    3, 3, NULL, "3",  BTN_THREE},
+    {"=",    4, 3, NULL, " = ",  BTN_EQUAL},
+
+    {"AC",   0, 4, NULL, "AC", BTN_CLEAR_ALL},
+    {"CE",   1, 4, NULL, "CE", BTN_CLEAR_ENTRY},
+    {"0",    2, 4, NULL, "0",  BTN_ZERO},
+    {".",    3, 4, NULL, ".",  BTN_DEC_POINT}
   };
 
   static gint nbuttons = sizeof(button_list) / sizeof(CalcButton);
@@ -162,7 +184,7 @@ gint make_ui(CalcWindow *cwindow)
   GtkWidget *popup_menu;
   GdkColor   event_box_bg_color;
   GdkColor   entry_text_color;
-  GdkColormap *cmap;
+  //GdkColormap *cmap;
   GtkStyle  *event_box_style;
   GtkStyle  *entry_style;
   GtkAccelGroup *accel_group;
@@ -170,9 +192,11 @@ gint make_ui(CalcWindow *cwindow)
   GtkTreeModel *model;
 	GtkTreeSelection *select;
 
-  gint nmenu_items = sizeof (menu_items) / sizeof (menu_items[0]);
+  //gint nmenu_items = sizeof (menu_items) / sizeof (menu_items[0]);
   gint i;
-  GtkItemFactoryEntry *menu_entry;
+
+  //TODO: Find and replace/comment out all references to the GTK 2 menu.
+  //GtkItemFactoryEntry *menu_entry;
 
   ConfigVariable *prefs = cwindow->widget_vars;
 
@@ -191,7 +215,7 @@ gint make_ui(CalcWindow *cwindow)
   gtk_widget_show (vbox);
 
   /* Menu bar  **************************************************************/
-
+  /*
   accel_group = gtk_accel_group_new ();
   cwindow->item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>",
 				       accel_group); // 2.0 Change
@@ -199,16 +223,10 @@ gint make_ui(CalcWindow *cwindow)
   for (i = 0; i < nmenu_items; i++) {
     menu_entry = menu_items + i;
 
-    /*printf ("menu is %s, callback_data is %s\n", menu_entry->path,
-	    *(call_data + i));*/
 
     gtk_item_factory_create_item (cwindow->item_factory, menu_entry,
 				  *(callback_data + i), 2);
   }
-  /*gtk_item_factory_create_items (item_factory, nmenu_items,
-				 menu_items, NULL);*/
-  //gtk_accel_group_attach (accel_group, GTK_OBJECT (cwindow->window));
-  // 2.0 Change
 
   menu_bar = gtk_item_factory_get_widget (cwindow->item_factory, "<main>");
 
@@ -216,7 +234,7 @@ gint make_ui(CalcWindow *cwindow)
   gtk_widget_show (menu_bar);
 
   gtk_window_add_accel_group (GTK_WINDOW(cwindow->window), accel_group);
-
+  */
   /* End of menus  **********************************************************/
 
   hpaned = gtk_hpaned_new ();
@@ -224,21 +242,20 @@ gint make_ui(CalcWindow *cwindow)
   //gtk_paned_set_handle_size (GTK_PANED(hpaned),
 	//		     10);
   // 2.0 Change
-  gtk_paned_set_gutter_size (GTK_PANED(hpaned),
-			     15);
+  //gtk_paned_set_gutter_size (GTK_PANED(hpaned), 15);
   gtk_widget_show (hpaned);
 
   /* Vboxes for main window *************************************************/
 
   vbox1 = gtk_vbox_new (FALSE, 10);
-  gtk_container_border_width (GTK_CONTAINER (vbox1), 10);
+  //gtk_container_border_width (GTK_CONTAINER (vbox1), 10);
   gtk_paned_add1 (GTK_PANED(hpaned), vbox1);
   gtk_widget_show (vbox1);
 
   /* Entry label widget  ****************************************************/
 
   frame = gtk_frame_new (NULL);
-  gtk_widget_set_usize (frame, prefs->pane_width, 36);
+  //gtk_widget_set_usize (frame, prefs->pane_width, 36);
   gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
   gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
   gtk_box_pack_start (GTK_BOX(vbox1), frame, FALSE, TRUE, 0);
@@ -248,13 +265,13 @@ gint make_ui(CalcWindow *cwindow)
   event_box = gtk_event_box_new ();
   gtk_container_add (GTK_CONTAINER(frame), event_box);
 
-  cmap = gdk_colormap_get_system();
+  //cmap = gdk_colormap_get_system();
 
   event_box_bg_color.red = 0xcf80;
   event_box_bg_color.green = 0xeff0;
   event_box_bg_color.blue = 0xc090;
 
-  if (!gdk_color_alloc(cmap, &event_box_bg_color)) {
+  /*if (!gdk_color_alloc(cmap, &event_box_bg_color)) {
     g_error("couldn't allocate event box background color");
   }
   else {
@@ -263,7 +280,7 @@ gint make_ui(CalcWindow *cwindow)
 
     gtk_widget_set_style (GTK_WIDGET(event_box), event_box_style);
     gtk_style_unref (event_box_style);
-  }
+  }*/
 
   gtk_widget_show (event_box);
 
@@ -280,7 +297,7 @@ gint make_ui(CalcWindow *cwindow)
   entry_text_color.green = 0x0000;
   entry_text_color.blue = 0x0000;
 
-  if (!gdk_color_alloc(cmap, &entry_text_color)) {
+  /*if (!gdk_color_alloc(cmap, &entry_text_color)) {
     g_error("couldn't allocate entry text color");
   }
   else {
@@ -289,25 +306,12 @@ gint make_ui(CalcWindow *cwindow)
 
     gtk_widget_set_style (GTK_WIDGET(cwindow->entry), entry_style);
     gtk_style_unref (entry_style);
-  }
+  }*/
 
   gtk_widget_show (cwindow->entry);
 
-  if (prefs->entry_font_name[0] != '\0') {
-   widget_font_load (cwindow->entry, prefs->entry_font_name);
-    //entry_font = gdk_font_load (prefs->entry_font_name);
-    /*style = gtk_style_new ();*/
-    //if (entry_font) {
-      //style = gtk_style_copy (gtk_widget_get_style (GTK_WIDGET(cwindow->entry)));
-      //style->font = entry_font;
-      //gtk_widget_set_style (GTK_WIDGET(cwindow->entry), style);
-      //gtk_style_unref (style);
-    //}
-    //else
-      //g_warning ("Couldn't load font %s,\nusing default gtk font instead",
-      //           prefs->entry_font_name);
-  }
-  // 2.0 Change
+  if (prefs->entry_font_name[0] != '\0')
+    widget_font_load (cwindow->entry, prefs->entry_font_name);
 
   /* Table for buttons  *****************************************************/
 
@@ -348,9 +352,9 @@ gint make_ui(CalcWindow *cwindow)
 	                  G_CALLBACK(select_row),
 										cwindow);
 
-  g_signal_connect (GTK_OBJECT(cwindow->clist), "button-press-event",
+  g_signal_connect (cwindow->clist, "button-press-event",
 		      G_CALLBACK(mouse_click_check),
-		      GTK_OBJECT(popup_menu));
+		      popup_menu);
 
   gtk_widget_show (cwindow->scrolled_window);
   gtk_widget_set_name (cwindow->clist, "output_window");
@@ -378,31 +382,30 @@ gint make_ui(CalcWindow *cwindow)
 			GDK_KEY_PRESS_MASK|
 			GDK_KEY_RELEASE_MASK);
 
-  g_signal_connect(GTK_OBJECT (cwindow->window), "key_press_event",
+  g_signal_connect(cwindow->window, "key_press_event",
 		     G_CALLBACK(key_press_event), cwindow->entry);
-  g_signal_connect(GTK_OBJECT (cwindow->window), "key_release_event",
+  g_signal_connect(cwindow->window, "key_release_event",
 		     G_CALLBACK(key_release_event), cwindow->entry);
 
   /* Final initialization ***************************************************/
 
-  gtk_object_set_data (GTK_OBJECT(cwindow->window), "cwindow", cwindow);
-  gtk_object_set_data (GTK_OBJECT(cwindow->window), "twindow", cwindow->window);
+  g_object_set_data (cwindow->window, "cwindow", cwindow);
+  g_object_set_data (cwindow->window, "twindow", cwindow->window);
 
   set_current_file ("Untitled");
   set_current_dir ();
 
   set_file_saved (cwindow, TRUE);
-  gtk_label_set (GTK_LABEL(cwindow->entry), "0");
+  gtk_label_set_text (GTK_LABEL(cwindow->entry), "0");
 
-  check_item = gtk_item_factory_get_widget(cwindow->item_factory,
-					   "/View/Show Headers");
-  gtk_check_menu_item_set_state (GTK_CHECK_MENU_ITEM(check_item),
-				 prefs->column_title_show);
+  /*
+  check_item = gtk_item_factory_get_widget(cwindow->item_factory, "/View/Show Headers");
+  gtk_check_menu_item_set_state (GTK_CHECK_MENU_ITEM(check_item), prefs->column_title_show);
   if (!prefs->column_title_show)
     g_object_set (G_OBJECT(cwindow->clist), "headers-visible", FALSE, NULL);
+  */
 
-
-  switch (prefs->precision) {
+  /*switch (prefs->precision) {
       case 2:
 	  check_item = gtk_item_factory_get_widget (cwindow->item_factory,
 		  "/View/0.00");
@@ -422,14 +425,14 @@ gint make_ui(CalcWindow *cwindow)
 		  TRUE);
 	  break;
       default:
-      	  cwindow->state->misc_state = 1; /* set this flag to tell the callback
-	      				     not to show the preferences dialog */
+          //set this flag to tell the callback not to show the preferences dialog
+      	  cwindow->state->misc_state = 1;
 	  check_item = gtk_item_factory_get_widget (cwindow->item_factory,
 		  "/View/Custom");
 	  gtk_check_menu_item_set_state (GTK_CHECK_MENU_ITEM(check_item),
 		  TRUE);
 	  break;
-  }
+  }*/
 
   return(0);
 }
@@ -438,15 +441,10 @@ gint make_ui(CalcWindow *cwindow)
 
 void make_buttons (GtkWidget *table, CalcWindow *cw)
 {
-  //GdkFont *button_font;
   PangoFontDescription *font_desc = NULL;
   gint index;
   GList *button_container;
   GtkWidget *button_label;
-  //GtkStyle *button_style;
-  // 2.0 Change
-  /*GdkColor button_color;
-    GdkColormap *cmap;*/
 
   if (cw->widget_vars->button_font_name[0] != 0) {
   	font_desc = pango_font_description_from_string (cw->widget_vars->button_font_name);
@@ -458,7 +456,7 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
     cw->button_list[index].widget = gtk_button_new_with_label(label);
 
 
-    if (!cw->button_list[index].sigfunc)
+    /*if (!cw->button_list[index].sigfunc)
       g_signal_connect (GTK_OBJECT(cw->button_list[index].widget), "clicked",
 	      G_CALLBACK(button_press),
 	      &cw->button_list[index].type);
@@ -467,13 +465,14 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
       g_signal_connect (GTK_OBJECT(cw->button_list[index].widget), "clicked",
 			  G_CALLBACK(cw->button_list[index].sigfunc),
 			  data);
-    }
-    g_signal_connect (GTK_OBJECT(cw->button_list[index].widget),
+    }*/
+
+    g_signal_connect (cw->button_list[index].widget,
 	    "enter_notify_event",
 	    G_CALLBACK(button_enter),
 	    NULL);
 
-    g_signal_connect (GTK_OBJECT(cw->button_list[index].widget),
+    g_signal_connect (cw->button_list[index].widget,
 	    "leave_notify_event",
 	    G_CALLBACK(button_leave),
 	    NULL);
@@ -502,7 +501,7 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
 
 
     if (font_desc) {
-      button_container = gtk_container_children (GTK_CONTAINER(cw->button_list[index].widget));
+      button_container = gtk_container_get_children (GTK_CONTAINER(cw->button_list[index].widget));
       button_label = GTK_WIDGET(button_container->data);
 
       gtk_widget_modify_font (GTK_WIDGET(button_label), font_desc);
@@ -542,11 +541,11 @@ GtkWidget *show_popup_menu (GtkWidget *clist)
 	if (popup_menu_items[i].sigfunc) {
     	g_signal_connect_swapped (G_OBJECT(menu_item),"activate",
 				G_CALLBACK(popup_menu_items[i].sigfunc),
-				GTK_OBJECT(clist));
+				clist);
 	}
 
     gtk_widget_show (menu_item);
-    gtk_menu_append (GTK_MENU(p_menu), menu_item);
+    //gtk_menu_append (GTK_MENU(p_menu), menu_item);
   }
   gtk_widget_show (p_menu);
   return (p_menu);
@@ -567,8 +566,7 @@ make_model (void)
 }
 
 /* Setup the treeview columns */
-static void
-make_columns (GtkTreeView *tree)
+static void make_columns (GtkTreeView *tree)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;

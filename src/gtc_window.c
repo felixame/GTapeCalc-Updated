@@ -51,14 +51,14 @@ CalcWindow *window_new ()
   cwindow->state->misc_state = 0;
 
   cwindow->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_policy (GTK_WINDOW(cwindow->window), 1, 1, 1);
+  //gtk_window_set_policy (GTK_WINDOW(cwindow->window), 1, 1, 1);
   gtk_window_set_default_size (GTK_WINDOW(cwindow->window),
 	  cwindow->widget_vars->win_x_size,
 	  cwindow->widget_vars->win_y_size);
-  g_signal_connect (GTK_OBJECT (cwindow->window), "delete_event",
+  g_signal_connect (cwindow->window, "delete_event",
 	  G_CALLBACK(delete_event),
 	  NULL);
-  g_signal_connect_after (GTK_OBJECT(cwindow->window), "realize",
+  g_signal_connect_after (cwindow->window, "realize",
 			    G_CALLBACK(window_set_icon),
 			    NULL);
   return (cwindow);
@@ -67,6 +67,7 @@ CalcWindow *window_new ()
 /* set the window icon *****************************************************/
 void window_set_icon (GtkWidget *widget, gpointer data)
 {
+  /*
   GdkPixmap      *pixmap;
   GdkBitmap      *mask;
   GtkIconFactory *factory;
@@ -94,6 +95,7 @@ void window_set_icon (GtkWidget *widget, gpointer data)
   gtk_stock_add (&item, 1);
   if (error)
   	g_warning ("error was: %s", error->message);
+  */
 
   return;
 }
