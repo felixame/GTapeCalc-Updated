@@ -77,6 +77,7 @@ typedef struct _PrintOption PrintOption;
 struct _CalcWindow
 {
   GtkWidget      *window;
+  GtkWidget      *headerBar;
   GtkWidget      *entry;
   GtkWidget      *clist;
   GtkWidget      *scrolled_window;
@@ -97,7 +98,7 @@ struct _CalcButton
   gint column;   /* left / right attach */
   gint row;      /* top / bottom attach */
   GtkWidget *widget;
-  //GtkItemFactoryCallback  sigfunc;
+  gpointer*  sigfunc; // Pointer to function that handles button action.
   gchar *data;
   ButtonType type;
 };

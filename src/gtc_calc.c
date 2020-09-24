@@ -179,7 +179,6 @@ void parse_output (GtkWidget *widget, CalcValues *values, CalcType type)
 	    sprintf (output, "%s", values->text);
 	  }
 	  else {
-	    gtk_label_set_text (GTK_LABEL(cw->entry), "");
 	    format_num(values->val1, valstr, cw->widget_vars->precision);
 	    sprintf(output, "%s", valstr);               /* num1_op */
 	  }
@@ -266,8 +265,8 @@ void parse_output (GtkWidget *widget, CalcValues *values, CalcType type)
 	  cw->state->in_sub = 0;
 	  skip_output = 0;
 
-	  gtk_label_set_text (GTK_LABEL(cw->entry), "error");
-	  display_out (widget, "error", "");                    /* op_error */
+	  gtk_label_set_text (GTK_LABEL(cw->entry), "Error");
+	  display_out (widget, "Error", "");                    /* op_error */
 	  display_out (widget, "", "");
 	  break;
       case NO_OUTPUT:

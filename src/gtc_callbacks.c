@@ -754,25 +754,26 @@ void print_file(GtkWidget *widget, gpointer data)
   }
 }
 
-
 /* updates the statusbar ****************************************************/
 void statusbar_update(GtkWidget *widget, gchar *open_file, gchar *text)
 {
-  gint statusbar_id;
+  //gint statusbar_id;
   gchar buff[256];
   static gint last_push;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  statusbar_id = gtk_statusbar_get_context_id(GTK_STATUSBAR(cw->statusbar),
-	  "Statusbar");
+  //statusbar_id = gtk_statusbar_get_context_id(GTK_STATUSBAR(cw->statusbar), "Statusbar");
 
 
-  if (last_push)
-    gtk_statusbar_remove (GTK_STATUSBAR(cw->statusbar),
-			  GPOINTER_TO_INT(statusbar_id), last_push);
-  sprintf(buff, "<%s> %s", open_file, text);
-  gtk_statusbar_push (GTK_STATUSBAR(cw->statusbar),
-		      GPOINTER_TO_INT(statusbar_id), buff);
+  if (last_push) {
+    //gtk_statusbar_remove (GTK_STATUSBAR(cw->statusbar), GPOINTER_TO_INT(statusbar_id), last_push);
+    gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), "");
+  }
+
+  sprintf(buff, "%s%s", text, open_file);
+  //gtk_statusbar_push (GTK_STATUSBAR(cw->statusbar),GPOINTER_TO_INT(statusbar_id), buff);
+  gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), buff);
+
   last_push++;
 }
 
@@ -816,7 +817,7 @@ void remove_row (GtkWidget *widget)
   tlist_remove_row (cw->clist);
   last_row--;
 
-  statusbar_update (widget, current_file, " not saved");
+  statusbar_update (widget, current_file, "•");
   set_file_saved (cw, FALSE);
 
   if (GTK_IS_DIALOG(widget))
@@ -831,7 +832,7 @@ void insert_row (GtkWidget *widget)
   tlist_insert_row (cw->clist, cw->selected_row);
   last_row++;
 
-  statusbar_update (widget, current_file, " not saved");
+  statusbar_update (widget, current_file, "•");
   set_file_saved (cw, FALSE);
 }
 
@@ -848,7 +849,7 @@ void insert_comment(GtkWidget *widget)
 
   tlist_set_text (cw->clist, cw->selected_row, 0, new_comment);
   gtk_entry_set_text (GTK_ENTRY(dlg_entry), "");
-  statusbar_update(widget, current_file, " not saved");
+  statusbar_update(widget, current_file, "•");
   gtk_widget_destroy (GTK_WIDGET(widget));
   set_file_saved (cw, FALSE);
 }
@@ -859,9 +860,11 @@ void remove_comment (GtkWidget *widget)                                         
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   tlist_set_text (cw->clist, cw->selected_row, 0, "");
-  statusbar_update(widget, current_file, " not saved");
+  statusbar_update(widget, current_file, "•");
   set_file_saved (cw, FALSE);
 }
+
+
 
 // TODO: Is this called anywhere?
 /* dummy handler ************************************************************/
@@ -1079,7 +1082,7 @@ void display_out(GtkWidget *widget, char *output, char *op)
 
   last_row = tlist_append (cw->clist, text);
 
-  statusbar_update (widget, current_file, " not saved");
+  statusbar_update (widget, current_file, "•");
   set_file_saved (cw, FALSE);
 }
 
@@ -1125,11 +1128,12 @@ void entry_clear (GtkWidget *widget)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), "");
+  gtk_label_set_text (GTK_LABEL(cw->entry), "0");
   cw->state->in_sub = 0;
   cw->state->have_sub = 0;
 }
 
+//TODO: Display pressed operator along side numbers.
 /* puts the numeric keys pressed into the entry label ***********************/
 void entry_show_keypress(GtkWidget *widget, gchar*num)
 {
@@ -1177,12 +1181,15 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
 void entry_show_total(GtkWidget *widget, double total)
 {
   gchar totalstr[MAX_STRING];
+  gchar buff[MAX_STRING];
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   format_num(total, totalstr, cw->widget_vars->precision);
 
+  sprintf(buff, "= %s", totalstr);
+
   gtk_label_set_text (GTK_LABEL(cw->entry), "");
-  gtk_label_set_text (GTK_LABEL(cw->entry), totalstr);
+  gtk_label_set_text (GTK_LABEL(cw->entry), buff);
   cw->state->clear_entry = 1;
 }
 

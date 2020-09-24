@@ -102,23 +102,20 @@ static GtkItemFactoryEntry menu_items[] = {
 /*   0      */ /* /Help/About             */
 /* }; */
 
-void dummy_button_callback() { printf("sigfunc callback called from button press.\n"); return; }
-
 gint make_ui(CalcWindow *cwindow)
 {
-  /*//Button array w/ GtkItemFactoryCallback entry.
   static CalcButton button_list[] = {
     {"(",    0, 0, NULL, NULL,       "(",   BTN_PAREN_LEFT},
     {")",    1, 0, NULL, NULL,       ")",   BTN_PAREN_RIGHT},
-    {"/",    2, 0, NULL, NULL,       " / ",   BTN_DIVIDE},
-    {"x",    3, 0, NULL, NULL,       " x ",   BTN_MULTIPLY},
-    {"-",    4, 0, NULL, NULL,       " - ",   BTN_MINUS},
+    {"/",    2, 0, NULL, NULL,       "/",   BTN_DIVIDE},
+    {"x",    3, 0, NULL, NULL,       "x",   BTN_MULTIPLY},
+    {"-",    4, 0, NULL, NULL,       "-",   BTN_MINUS},
 
-    {"%",    0, 1, NULL, NULL,       " % ",   BTN_PERCENT},
+    {"%",    0, 1, NULL, NULL,       "%",   BTN_PERCENT},
     {"7",    1, 1, NULL, NULL,       "7",   BTN_SEVEN},
     {"8",    2, 1, NULL, NULL,       "8",   BTN_EIGHT},
     {"9",    3, 1, NULL, NULL,       "9",   BTN_NINE},
-    {"+",    4, 1, NULL, NULL,       " + ",   BTN_PLUS},
+    {"+",    4, 1, NULL, NULL,       "+",   BTN_PLUS},
 
     {"x²",   0, 2, NULL, NULL,       "x²", BTN_X_SQUARED},
     {"4",    1, 2, NULL, NULL,       "4",   BTN_FOUR},
@@ -129,42 +126,12 @@ gint make_ui(CalcWindow *cwindow)
     {"1",    1, 3, NULL, NULL,        "1",  BTN_ONE},
     {"2",    2, 3, NULL, NULL,        "2",  BTN_TWO},
     {"3",    3, 3, NULL, NULL,        "3",  BTN_THREE},
-    {"=",    4, 3, NULL, NULL,        " = ",  BTN_EQUAL},
+    {"=",    4, 3, NULL, NULL,        "=",  BTN_EQUAL},
 
     {"AC",   0, 4, NULL, clear,       "AC", BTN_CLEAR_ALL},
     {"CE",   1, 4, NULL, entry_clear, "CE", BTN_CLEAR_ENTRY},
     {"0",    2, 4, NULL, NULL,        "0",  BTN_ZERO},
     {".",    3, 4, NULL, NULL,        ".",  BTN_DEC_POINT}
-  };*/
-
-    static CalcButton button_list[] = {
-    {"(",    0, 0, NULL, "(",   BTN_PAREN_LEFT},
-    {")",    1, 0, NULL, ")",   BTN_PAREN_RIGHT},
-    {"/",    2, 0, NULL, " / ",   BTN_DIVIDE},
-    {"x",    3, 0, NULL, " x ",   BTN_MULTIPLY},
-    {"-",    4, 0, NULL, " - ",   BTN_MINUS},
-
-    {"%",    0, 1, NULL, " % ",   BTN_PERCENT},
-    {"7",    1, 1, NULL, "7",   BTN_SEVEN},
-    {"8",    2, 1, NULL, "8",   BTN_EIGHT},
-    {"9",    3, 1, NULL, "9",   BTN_NINE},
-    {"+",    4, 1, NULL, " + ",   BTN_PLUS},
-
-    {"x²",   0, 2, NULL, "x²", BTN_X_SQUARED},
-    {"4",    1, 2, NULL, "4",   BTN_FOUR},
-    {"5",    2, 2, NULL, "5",   BTN_FIVE},
-    {"6",    3, 2, NULL, "6",   BTN_SIX},
-
-    {"±",    0, 3, NULL, "±",  BTN_PLUS_MINUS},
-    {"1",    1, 3, NULL, "1",  BTN_ONE},
-    {"2",    2, 3, NULL, "2",  BTN_TWO},
-    {"3",    3, 3, NULL, "3",  BTN_THREE},
-    {"=",    4, 3, NULL, " = ",  BTN_EQUAL},
-
-    {"AC",   0, 4, NULL, "AC", BTN_CLEAR_ALL},
-    {"CE",   1, 4, NULL, "CE", BTN_CLEAR_ENTRY},
-    {"0",    2, 4, NULL, "0",  BTN_ZERO},
-    {".",    3, 4, NULL, ".",  BTN_DEC_POINT}
   };
 
   static gint nbuttons = sizeof(button_list) / sizeof(CalcButton);
@@ -172,11 +139,17 @@ gint make_ui(CalcWindow *cwindow)
   gint nrows    = 5;
   gint ncolumns = 5;
 
+  GtkWidget *newHeaderBar;
+  GtkWidget *newTapeButton;
+  GtkWidget *newSaveButton;
+  GtkWidget *newMenuButton;
+  GtkWidget *newEditButton;
+
   GtkWidget *vbox;
   GtkWidget *vbox1;
 
   GtkWidget *hpaned;
-  GtkWidget *table;
+  GtkWidget *calcButtonGrid;
   GtkWidget *frame;
   GtkWidget *event_box;
   GtkWidget *check_item;
@@ -207,10 +180,53 @@ gint make_ui(CalcWindow *cwindow)
   gtk_rc_parse (rcname);
   g_free (rcname);
 
+  /* Header Bar */
+
+  newHeaderBar = gtk_header_bar_new();
+
+  gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (newHeaderBar), TRUE);
+  gtk_header_bar_set_title(GTK_HEADER_BAR(newHeaderBar), "gtapecalc");
+  //gtk_header_bar_set_subtitle(GTK_HEADER_BAR(newHeaderBar), "Name of Current Open File Goes Here");
+  gtk_window_set_titlebar (GTK_WINDOW(cwindow->window), newHeaderBar);
+  gtk_widget_show(newHeaderBar);
+
+  // Replacement for /file/new.
+  // Create new tape record.
+  newTapeButton = gtk_button_new_from_icon_name("document-new-symbolic", GTK_ICON_SIZE_MENU);
+
+  // Replacement for /edit/preferences, /view, and /help.
+  // Holds checkbox to show/hide header, floating point spinner, preferences, and help.
+  newMenuButton = gtk_button_new_from_icon_name("open-menu-symbolic", GTK_ICON_SIZE_MENU);
+
+  // Replacement for /edit.
+  // Holds add/delete note and insert/delete line.
+  newEditButton = gtk_button_new_from_icon_name("accessories-text-editor-symbolic", GTK_ICON_SIZE_MENU);
+
+  // Replacement for /file/save and /file/save as.
+  // Saves current tape record.
+  newSaveButton = gtk_button_new_from_icon_name("document-save-symbolic", GTK_ICON_SIZE_MENU);
+
+  gtk_header_bar_pack_start(GTK_HEADER_BAR(newHeaderBar), newTapeButton);
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(newHeaderBar), newMenuButton);
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(newHeaderBar), newEditButton);
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(newHeaderBar), newSaveButton);
+
+  GtkWidget *newPopover;
+
+  newPopover = gtk_popover_new (newMenuButton);
+
+  gtk_widget_show(newTapeButton);
+  gtk_widget_show(newSaveButton);
+  gtk_widget_show(newMenuButton);
+  gtk_widget_show(newEditButton);
+  gtk_widget_show(newPopover);
+
+  cwindow->headerBar = newHeaderBar;
+
   /*config_load_defaults();*/
   /* Main vbox **************************************************************/
 
-  vbox = gtk_vbox_new (FALSE, 0);
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add (GTK_CONTAINER (cwindow->window), vbox);
   gtk_widget_show (vbox);
 
@@ -237,7 +253,7 @@ gint make_ui(CalcWindow *cwindow)
   */
   /* End of menus  **********************************************************/
 
-  hpaned = gtk_hpaned_new ();
+  hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_add (GTK_CONTAINER(vbox), hpaned);
   //gtk_paned_set_handle_size (GTK_PANED(hpaned),
 	//		     10);
@@ -247,7 +263,7 @@ gint make_ui(CalcWindow *cwindow)
 
   /* Vboxes for main window *************************************************/
 
-  vbox1 = gtk_vbox_new (FALSE, 10);
+  vbox1 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
   //gtk_container_border_width (GTK_CONTAINER (vbox1), 10);
   gtk_paned_add1 (GTK_PANED(hpaned), vbox1);
   gtk_widget_show (vbox1);
@@ -267,9 +283,9 @@ gint make_ui(CalcWindow *cwindow)
 
   //cmap = gdk_colormap_get_system();
 
-  event_box_bg_color.red = 0xcf80;
-  event_box_bg_color.green = 0xeff0;
-  event_box_bg_color.blue = 0xc090;
+  //event_box_bg_color.red = 0xcf80;
+  //event_box_bg_color.green = 0xeff0;
+  //event_box_bg_color.blue = 0xc090;
 
   /*if (!gdk_color_alloc(cmap, &event_box_bg_color)) {
     g_error("couldn't allocate event box background color");
@@ -293,9 +309,9 @@ gint make_ui(CalcWindow *cwindow)
   // the dark theme so we'll have to manually set the entry text color to
   // black so that we have some contrast with the forced light event box
   // regardless of theme.
-  entry_text_color.red = 0x0000;
-  entry_text_color.green = 0x0000;
-  entry_text_color.blue = 0x0000;
+  //entry_text_color.red = 0x0000;
+  //entry_text_color.green = 0x0000;
+  //entry_text_color.blue = 0x0000;
 
   /*if (!gdk_color_alloc(cmap, &entry_text_color)) {
     g_error("couldn't allocate entry text color");
@@ -315,15 +331,21 @@ gint make_ui(CalcWindow *cwindow)
 
   /* Table for buttons  *****************************************************/
 
-  table = gtk_table_new(nrows, ncolumns, TRUE);
+  /*table = gtk_table_new(nrows, ncolumns, TRUE);
   gtk_table_set_row_spacings (GTK_TABLE(table), 5);
-  gtk_table_set_col_spacings (GTK_TABLE(table), 5);
+  gtk_table_set_col_spacings (GTK_TABLE(table), 5);*/
 
-  gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 0);
+  // Switched from GtkTable to GtkGrid.
+  calcButtonGrid = gtk_grid_new();
+  gtk_grid_set_row_spacing (GTK_GRID(calcButtonGrid), 5);
+  gtk_grid_set_column_spacing (GTK_GRID(calcButtonGrid), 5);
 
-  gtk_widget_show (table);
 
-  make_buttons(table, cwindow);
+  gtk_box_pack_start (GTK_BOX(vbox1), calcButtonGrid, TRUE, TRUE, 0);
+
+  gtk_widget_show (calcButtonGrid);
+
+  make_buttons(calcButtonGrid, cwindow);
 
   /* CList widget for output ************************************************/
 
@@ -439,7 +461,7 @@ gint make_ui(CalcWindow *cwindow)
 
 /* Loop through the button array ********************************************/
 
-void make_buttons (GtkWidget *table, CalcWindow *cw)
+void make_buttons (GtkWidget *calcButtonGrid, CalcWindow *cw)
 {
   PangoFontDescription *font_desc = NULL;
   gint index;
@@ -455,17 +477,20 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
   	gchar *label = g_locale_to_utf8 (cw->button_list[index].label, -1, NULL, NULL, NULL);
     cw->button_list[index].widget = gtk_button_new_with_label(label);
 
+    // Button signal connections.
 
-    /*if (!cw->button_list[index].sigfunc)
-      g_signal_connect (GTK_OBJECT(cw->button_list[index].widget), "clicked",
+    // If the button doesn't have a callback function,
+    // just send the button type to button_press().
+    if (!cw->button_list[index].sigfunc)
+      g_signal_connect (cw->button_list[index].widget, "clicked",
 	      G_CALLBACK(button_press),
 	      &cw->button_list[index].type);
     else{
        gchar *data = g_locale_to_utf8 (cw->button_list[index].data, -1, NULL, NULL, NULL);
-      g_signal_connect (GTK_OBJECT(cw->button_list[index].widget), "clicked",
+      g_signal_connect (cw->button_list[index].widget, "clicked",
 			  G_CALLBACK(cw->button_list[index].sigfunc),
 			  data);
-    }*/
+    }
 
     g_signal_connect (cw->button_list[index].widget,
 	    "enter_notify_event",
@@ -480,21 +505,31 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
     if (strcmp (cw->button_list[index].label, "+") != 0 &&
         strcmp (cw->button_list[index].label, "=") != 0) {
 
-      gtk_table_attach_defaults (GTK_TABLE(table),
+      // Attach Parameters:
+      // gtk_grid_attach(<GtkGrid Object>,
+      // <widget to add>,
+      // <column>,
+      // <row>,
+      // <width>,
+      // <height>);
+
+      gtk_grid_attach (GTK_GRID(calcButtonGrid),
 	      cw->button_list[index].widget,
 	      cw->button_list[index].column,
-	      cw->button_list[index].column + 1,
 	      cw->button_list[index].row,
-	      cw->button_list[index].row + 1);
+	      1,
+	      1);
     }
     else {
 
-      gtk_table_attach_defaults (GTK_TABLE(table),
+      // "+" and "=" buttons are double the height of regular calc buttons.
+
+      gtk_grid_attach (GTK_GRID(calcButtonGrid),
 	      cw->button_list[index].widget,
 	      cw->button_list[index].column,
-	      cw->button_list[index].column + 1,
 	      cw->button_list[index].row,
-	      cw->button_list[index].row + 2);
+	      1,
+	      2);
     }
 
     gtk_widget_set_name (cw->button_list[index].widget, "keypad_button");
@@ -504,14 +539,14 @@ void make_buttons (GtkWidget *table, CalcWindow *cw)
       button_container = gtk_container_get_children (GTK_CONTAINER(cw->button_list[index].widget));
       button_label = GTK_WIDGET(button_container->data);
 
-      gtk_widget_modify_font (GTK_WIDGET(button_label), font_desc);
+      //gtk_widget_modify_font (GTK_WIDGET(button_label), font_desc);
     }
 
     gtk_widget_show (cw->button_list[index].widget);
 
   }
 
-  pango_font_description_free (font_desc);
+  //pango_font_description_free (font_desc);
 }
 
 /* Popup menu ***************************************************************/
