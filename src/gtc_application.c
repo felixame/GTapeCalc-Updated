@@ -1,28 +1,21 @@
 #include <gtk/gtk.h>
 
 #include "gtc_application.h"
+#include "gtc_window.h"
+
+#include "gtc_callbacks.h"
+#include "gtc_prefs.h"
+
 #include "../config.h"
 
-G_DEFINE_TYPE (GTapeCalcApplication, gtapecalc_application, GTK_TYPE_APPLICATION)
+G_DEFINE_TYPE (CalcApplication, calc_application, GTK_TYPE_APPLICATION)
 
 static void
-gtapecalc_application_class_init (GTapeCalcApplicationClass *klass)
-{
-  G_APPLICATION_CLASS (klass)->startup = gtapecalc_application_startup;
-  G_APPLICATION_CLASS (klass)->activate = gtapecalc_application_activate;
-  G_APPLICATION_CLASS (klass)->open = gtapecalc_application_open;
-}
-
-static void
-gtapecalc_application_example_app_init (GTapeCalcApplication *gTapeCalcApplication)
-{
-
-}
-
-static void
-gtapecalc_application_startup (GApplication *gTapeCalcApplication)
+calc_application_startup (GApplication *calcApplication)
 {
   GtkCssProvider *calcCssProvider;
+
+	G_APPLICATION_CLASS (calc_application_parent_class)->startup (calcApplication);
 
   calcCssProvider = gtk_css_provider_new ();
 
@@ -33,43 +26,46 @@ gtapecalc_application_startup (GApplication *gTapeCalcApplication)
 }
 
 static void
-gtapecalc_application_activate (GApplication *gTapeCalcApplication)
+calc_application_activate (GApplication *calcApplication)
 {
 	CalcWindow *calcWindow;
 
-	/* It's good practice to check your parameters at the beginning of the
-	 * function. It helps catch errors early and in development instead of
-	 * by your users.
-	 */
-	g_assert (GTK_IS_APPLICATION (gTapeCalcApplication));
-
-	/* Get the current window or create one if necessary. */
-	calcWindow = gtk_application_get_active_window (gTapeCalcApplication);
-	if (!calcWindow)
-		calcWindow = g_object_new (
-													CALC_TYPE_WINDOW,
-		            					"application", gTapeCalcApplication,
+	calcWindow = g_object_new (
+													CALC_WINDOW_TYPE,
+		            					"application", calcApplication,
 		                      NULL
 													);
 
-	/* Ask the window manager/compositor to present the window. */
-	gtk_window_present (calcWindow);
+	gtk_window_present (GTK_WINDOW (calcWindow));
 
 	// Begin new file session. Default filename is "Untitled.txt".
 	// I don't think we need to expand the functionality of the files the
 	// original GTapeCalc uses so we'll be keeping compatibility with previously
 	// created tape files.
 
-	//file_session_new ();
+	//file_new ();
 
 	gtk_header_bar_set_subtitle(calcWindow->headerBar, "Name of Current Open File Goes Here");
 
 }
 
-GTapeCalcApplication *
-gtapecalc_application_new (void)
+static void
+calc_application_class_init (CalcApplicationClass *klass)
 {
-  return g_object_new (EXAMPLE_APP_TYPE,
+  G_APPLICATION_CLASS (klass)->startup = calc_application_startup;
+  G_APPLICATION_CLASS (klass)->activate = calc_application_activate;
+}
+
+static void
+calc_application_init (CalcApplication *self)
+{
+}
+
+CalcApplication *
+calc_application_new ()
+{
+  return g_object_new (CALC_APPLICATION_TYPE,
                        "application-id", APPLICATION_ID,
+											 "flags", G_APPLICATION_FLAGS_NONE,
                        NULL);
 }

@@ -25,7 +25,6 @@
 #include "gtc_calc.h"
 #include "gtc_callbacks.h"
 #include "gtc_utils.h"
-#include "gtc_window.h"
 
 
 int calculate(CalcValues *vals);
@@ -42,7 +41,7 @@ void parse_main_input (GtkWidget *widget, ButtonType btn_type)
   gchar *entry_data;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  entry_data = gtk_label_get_text (GTK_LABEL(cw->entry));
+  entry_data = gtk_entry_get_text (GTK_ENTRY(cw->entry));
   strip_commas (entry_data);
 
   if (btn_type >= BTN_X_SQUARED && btn_type <= BTN_PLUS_MINUS) {
@@ -265,7 +264,7 @@ void parse_output (GtkWidget *widget, CalcValues *values, CalcType type)
 	  cw->state->in_sub = 0;
 	  skip_output = 0;
 
-	  gtk_label_set_text (GTK_LABEL(cw->entry), "Error");
+	  gtk_entry_set_text (GTK_ENTRY(cw->entry), "Error");
 	  display_out (widget, "Error", "");                    /* op_error */
 	  display_out (widget, "", "");
 	  break;
@@ -334,7 +333,7 @@ void parse_grouped_input (GtkWidget *widget, ButtonType btn_type)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
 
-  input = gtk_label_get_text (GTK_LABEL(cw->entry));
+  input = gtk_entry_get_text (GTK_ENTRY(cw->entry));
 
   temp_string = (char *) malloc (strlen(input) * sizeof(char) + 1);
   memset (temp_string, '\0', sizeof(temp_string));
@@ -438,7 +437,7 @@ void clear(GtkWidget *widget, gpointer data)
   mainval.val1 = mainval.val2 = mainval.total = 0;
   mainval.val1flag = 0;
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), "0");
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), "0");
   cw->state->clear_entry = 1;
   cw->state->have_sub = 0;
   cw->state->in_sub = 0;

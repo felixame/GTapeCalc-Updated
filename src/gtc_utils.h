@@ -20,6 +20,7 @@
 #define __UTIL_H__
 
 #include "gtc_types.h"
+#include "gtc_window.h"
 
 
 gpointer get_widget_data (GtkWidget *widget, gchar *key);

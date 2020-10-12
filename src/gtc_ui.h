@@ -20,6 +20,7 @@
 #define __GTCALC_UI_H__
 
 #include "gtc_types.h"
+#include "gtc_window.h"
 
 enum
 {
@@ -29,10 +30,11 @@ enum
   N_COLUMNS
 };
 
-gint make_ui (CalcWindow *cwindow);
+gint make_ui (CalcWindow *);
 
-void make_buttons(GtkWidget *table, CalcWindow *cw);
+void make_header_bar (GtkWidget *);
+void make_buttons(GtkWidget *, CalcWindow *);
 
-GtkWidget *show_popup_menu (GtkWidget *clist);
+GtkWidget *show_popup_menu (GtkWidget *);
 
 #endif /* __GTCALC_UI_H__ */

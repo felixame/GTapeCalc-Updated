@@ -25,10 +25,10 @@
 #include "gtc_calc.h"
 #include "gtc_callbacks.h"
 #include "gtc_ui.h"
-#include "gtc_dialogs.h"
 #include "gtc_prefs.h"
 #include "gtc_utils.h"
 #include "gtc_print.h"
+#include "gtc_window.h"
 #include "../config.h"
 
 static GtkWidget *current_widget;
@@ -38,13 +38,6 @@ static gint       last_row = 0;
 
 void entry_backspace (GtkWidget *widget);
 void entry_show_keypress(GtkWidget *widget, gchar *num);
-
-/* basic app exit *********************************************************/
-void close_app(GtkWidget *widget)
-{
-  if (!delete_event (widget))
-  	gtk_main_quit();
-}
 
 /* toggles the visibility of the column titles *****************************/
 void column_toggle (GtkWidget *widget)
@@ -400,7 +393,8 @@ int file_save_event(GtkWidget *widget, gchar *data)
       if (err_msg) {
 	sprintf (err_msg, "Couldn't save file \n%s\n\n(%s)",
 		 name, str_err);
-	dlg_error_msg (cw->window, err_msg);
+	// FIXME: Show dialog with error message
+	//dlg_error_msg (cw->window, err_msg);
   	free (err_msg);
       }
       else
@@ -412,7 +406,8 @@ int file_save_event(GtkWidget *widget, gchar *data)
       if (err_msg) {
 	sprintf (err_msg, "Couldn't save file \n%s\n\n(%s)",
 		 current_file, str_err);
-	dlg_error_msg (cw->window, err_msg);
+	  // FIXME: Fix error message dialog.
+		//dlg_error_msg (cw->window, err_msg);
   	free (err_msg);
       }
       else
@@ -450,28 +445,29 @@ int file_save_event(GtkWidget *widget, gchar *data)
 /* prompts for the user to save before closing ******************************/
 void file_close_cb (GtkWidget *widget)
 {
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+	// FIXME: Broke when gtc_dialog was removed. Needs to be redone in GTK 3.
+  /* CalcWindow *cw = get_data_from_toplevel (widget, "cwindow"); */
 
-  if ((!cw->state->file_saved) && (strcmp(current_file,"Untitled"))){
-    ButtonItem file_save_buttons[] = {
-      {NULL, GTK_STOCK_SAVE,   G_CALLBACK(file_save_before_close), FALSE},
-      {NULL, GTK_STOCK_NO,     G_CALLBACK(new_tape_event),         FALSE},
-      {NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog),         TRUE},
-    };
+  /* if ((!cw->state->file_saved) && (strcmp(current_file,"Untitled"))){ */
+  /*   ButtonItem file_save_buttons[] = { */
+  /*     {NULL, GTK_STOCK_SAVE,   G_CALLBACK(file_save_before_close), FALSE}, */
+  /*     {NULL, GTK_STOCK_NO,     G_CALLBACK(new_tape_event),         FALSE}, */
+  /*     {NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog),         TRUE}, */
+  /*   }; */
 
-    DialogItem file_save_items = {
-      NULL,
-      300, 150,
-      TRUE,
-      "Save?",
-      GTK_STOCK_DIALOG_QUESTION,
-      " File has changed since last save \n\n Save Changes?  ",
-      sizeof(file_save_buttons) / sizeof(ButtonItem)
-    };
+  /*   DialogItem file_save_items = { */
+  /*     NULL, */
+  /*     300, 150, */
+  /*     TRUE, */
+  /*     "Save?", */
+  /*     GTK_STOCK_DIALOG_QUESTION, */
+  /*     " File has changed since last save \n\n Save Changes?  ", */
+  /*     sizeof(file_save_buttons) / sizeof(ButtonItem) */
+  /*   }; */
 
-    dialog_new (widget, &file_save_items, file_save_buttons);
-  }
-  else new_tape_event (widget);
+  /*   dialog_new (widget, &file_save_items, file_save_buttons); */
+  /* } */
+  /* else new_tape_event (widget); */
 }
 
 /* saves file, then clears the display **************************************/
@@ -483,37 +479,38 @@ void file_save_before_close (GtkWidget *widget)
   ret_val = file_save_event (widget, NULL);
   if (ret_val == 0) {
     set_current_file("Untitled");
-    statusbar_update (cw->window, current_file, "");
-    new_tape_event (cw->window);
+    //statusbar_update (cw->window, current_file, "");
+    //new_tape_event (cw->window);
   }
 }
 
 /* checks if file needs to be saved before exiting **************************/
 void file_save_before_exit_cb (GtkWidget *widget)
 {
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+	// FIXME: Broke when gtc_dialog was removed. Needs to be redone in GTK 3.
+  /* CalcWindow *cw = get_data_from_toplevel (widget, "cwindow"); */
 
-  if (!cw->state->file_saved) {
-    ButtonItem file_save_buttons[] = {
-      {NULL, GTK_STOCK_SAVE,   G_CALLBACK(file_save_before_exit), FALSE},
-      {NULL, GTK_STOCK_NO,     gtk_main_quit,             FALSE},
-      {NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog),         TRUE},
-    };
+  /* if (!cw->state->file_saved) { */
+  /*   ButtonItem file_save_buttons[] = { */
+  /*     {NULL, GTK_STOCK_SAVE,   G_CALLBACK(file_save_before_exit), FALSE}, */
+  /*     {NULL, GTK_STOCK_NO,     gtk_main_quit,             FALSE}, */
+  /*     {NULL, GTK_STOCK_CANCEL, G_CALLBACK(destroy_dialog),         TRUE}, */
+  /*   }; */
 
-    DialogItem file_save_items = {
-      NULL,
-      300, 150,
-      TRUE,
-      "Save?",
-      GTK_STOCK_DIALOG_QUESTION,
-      " File has changed since last save \n\n Save Changes?  ",
-      sizeof(file_save_buttons) / sizeof(ButtonItem)
-    };
+  /*   DialogItem file_save_items = { */
+  /*     NULL, */
+  /*     300, 150, */
+  /*     TRUE, */
+  /*     "Save?", */
+  /*     GTK_STOCK_DIALOG_QUESTION, */
+  /*     " File has changed since last save \n\n Save Changes?  ", */
+  /*     sizeof(file_save_buttons) / sizeof(ButtonItem) */
+  /*   }; */
 
-    dialog_new (widget, &file_save_items, file_save_buttons);
-  }
-  else
-    gtk_main_quit ();
+  /*   dialog_new (widget, &file_save_items, file_save_buttons); */
+  /* } */
+  /* else */
+  /*   gtk_main_quit (); */
 }
 /* saves file, then exit ****************************************************/
 void file_save_before_exit (GtkWidget *widget)
@@ -742,7 +739,8 @@ void print_file(GtkWidget *widget, gpointer data)
     str_err = strerror (error);
 
     err_msg = g_strdup_printf ("I had a problem printing.\nThe error was - \n %s\n", str_err);
-    dlg_error_msg (widget, err_msg);
+		// FIXME: Fix error message dialog.
+    //dlg_error_msg (widget, err_msg);
     g_free (err_msg);
   }
 
@@ -757,41 +755,41 @@ void print_file(GtkWidget *widget, gpointer data)
 /* updates the statusbar ****************************************************/
 void statusbar_update(GtkWidget *widget, gchar *open_file, gchar *text)
 {
-  //gint statusbar_id;
-  gchar buff[256];
-  static gint last_push;
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  /* //gint statusbar_id; */
+  /* gchar buff[256]; */
+  /* static gint last_push; */
+  /* CalcWindow *cw = get_data_from_toplevel (widget, "cwindow"); */
 
-  //statusbar_id = gtk_statusbar_get_context_id(GTK_STATUSBAR(cw->statusbar), "Statusbar");
+  /* //statusbar_id = gtk_statusbar_get_context_id(GTK_STATUSBAR(cw->statusbar), "Statusbar"); */
 
 
-  if (last_push) {
-    //gtk_statusbar_remove (GTK_STATUSBAR(cw->statusbar), GPOINTER_TO_INT(statusbar_id), last_push);
-    gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), "");
-  }
+  /* if (last_push) { */
+  /*   //gtk_statusbar_remove (GTK_STATUSBAR(cw->statusbar), GPOINTER_TO_INT(statusbar_id), last_push); */
+  /*   gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), ""); */
+  /* } */
 
-  sprintf(buff, "%s%s", text, open_file);
-  //gtk_statusbar_push (GTK_STATUSBAR(cw->statusbar),GPOINTER_TO_INT(statusbar_id), buff);
-  gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), buff);
+  /* sprintf(buff, "%s%s", text, open_file); */
+  /* //gtk_statusbar_push (GTK_STATUSBAR(cw->statusbar),GPOINTER_TO_INT(statusbar_id), buff); */
+  /* gtk_header_bar_set_subtitle(GTK_HEADER_BAR (cw->headerBar), buff); */
 
-  last_push++;
+  /* last_push++; */
 }
 
 /* clears the variables and the output window *******************************/
 void new_tape_event(GtkWidget *widget)
 {
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  /* CalcWindow *cw = get_data_from_toplevel (widget, "cwindow"); */
 
-  clear(widget, NULL);
-  tlist_clear(cw->clist);
+  /* clear(widget, NULL); */
+  /* tlist_clear(cw->clist); */
 
-  set_current_file ("Untitled");
-  statusbar_update(widget, current_file, "");
+  /* set_current_file ("Untitled"); */
+  /* statusbar_update(widget, current_file, ""); */
 
-  set_file_saved (cw, TRUE);
+  /* set_file_saved (cw, TRUE); */
 
-  if (GTK_IS_DIALOG(widget))
-    gtk_widget_destroy (GTK_WIDGET(widget));
+  /* if (GTK_IS_DIALOG(widget)) */
+  /*   gtk_widget_destroy (GTK_WIDGET(widget)); */
 
 }
 
@@ -990,7 +988,7 @@ int key_event(GtkWidget *widget, gint keyval, gint is_pressed)
 	  return (-1);
     case GDK_KEY_Delete:
 	  if (is_pressed)
-	    gtk_label_set_text (GTK_LABEL(cw->entry), "");
+	    gtk_entry_set_text (GTK_ENTRY(cw->entry), "");
 	  return (-1);
     case GDK_KEY_KP_Decimal:
 	  return(BTN_DEC_POINT);
@@ -1089,13 +1087,13 @@ void display_out(GtkWidget *widget, char *output, char *op)
 /* deletes the last number from the entry label *****************************/
 void entry_backspace (GtkWidget *widget)
 {
-  gchar *current_num;
+  const gchar *current_num;
   gchar *ret_num;
   gchar new_num[MAX_STRING];
   gint len;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  current_num = gtk_label_get_text (GTK_LABEL(cw->entry));
+  current_num = gtk_entry_get_text (GTK_ENTRY(cw->entry));
   strcpy(new_num, current_num);
 
   len = strlen(new_num);
@@ -1119,7 +1117,7 @@ void entry_backspace (GtkWidget *widget)
   strip_commas (new_num);
   ret_num = add_commas (new_num);
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), ret_num);
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), ret_num);
   free (ret_num);
 }
 
@@ -1128,7 +1126,7 @@ void entry_clear (GtkWidget *widget)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), "0");
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), "0");
   cw->state->in_sub = 0;
   cw->state->have_sub = 0;
 }
@@ -1146,11 +1144,11 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   if (cw->state->clear_entry) {
-    gtk_label_set_text(GTK_LABEL(cw->entry), "");
+    gtk_entry_set_text(GTK_ENTRY(cw->entry), "");
     cw->state->clear_entry = 0;
   }
 
-  current_num = gtk_label_get_text (GTK_LABEL(cw->entry));
+  current_num = gtk_entry_get_text (GTK_ENTRY(cw->entry));
   if (strlen(current_num) < sizeof(new_num))
     strcpy(new_num, current_num);
   else {
@@ -1170,26 +1168,26 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
   if (!cw->state->in_sub)
     num_to_show = add_commas (new_num);
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), "");
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), "");
   if (!cw->state->in_sub) {
-    gtk_label_set_text (GTK_LABEL(cw->entry), num_to_show);
+    gtk_entry_set_text (GTK_ENTRY(cw->entry), num_to_show);
     free (num_to_show);
   }
-  else gtk_label_set_text (GTK_LABEL(cw->entry), new_num);
+  else gtk_entry_set_text (GTK_ENTRY(cw->entry), new_num);
 }
 
 void entry_show_total(GtkWidget *widget, double total)
 {
   gchar totalstr[MAX_STRING];
-  gchar buff[MAX_STRING];
+  //gchar buff[MAX_STRING];
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   format_num(total, totalstr, cw->widget_vars->precision);
 
-  sprintf(buff, "= %s", totalstr);
+  //sprintf(buff, "= %s", totalstr);
 
-  gtk_label_set_text (GTK_LABEL(cw->entry), "");
-  gtk_label_set_text (GTK_LABEL(cw->entry), buff);
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), "");
+  gtk_entry_set_text (GTK_ENTRY(cw->entry), totalstr);
   cw->state->clear_entry = 1;
 }
 
@@ -1198,6 +1196,7 @@ void entry_show_total(GtkWidget *widget, double total)
 void button_press(GtkWidget *widget, ButtonType *data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  const gchar *input = gtk_entry_get_text (GTK_ENTRY(cw->entry));
 
   if (cw->state->have_sub) {
     parse_grouped_input (widget, *data);
@@ -1207,20 +1206,26 @@ void button_press(GtkWidget *widget, ButtonType *data)
   }
 
   if (*data == BTN_PAREN_LEFT) {
-  	gtk_label_set_text (GTK_LABEL(cw->entry), "");
+  	gtk_entry_set_text (GTK_ENTRY(cw->entry), "");
     cw->state->in_sub = 1;
   }
 
+  // If the button that is pressed is a numerical button or the
+  // decimal point button call entry_show_keypress() to
+  // append symbols onto the end of the current label in entry.
+  // If the button is an operator, parse the text in entry.
   if ((*data >= BTN_ZERO && *data <= BTN_DEC_POINT) ||
        cw->state->in_sub == 1) {
-    gchar *numb = get_button_data (cw->button_list, *data);
 
+    gchar *numb = get_button_data (cw->button_list, *data);
     entry_show_keypress (widget, numb);
   }
   else {
+
     parse_main_input(widget, *data);
   }
 
+  // TODO: Fix condition where multiple ) button presses causes a crash.
   if (*data == BTN_PAREN_RIGHT){
     cw->state->in_sub = 0;
     cw->state->have_sub = 1;

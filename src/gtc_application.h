@@ -19,18 +19,20 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include "gtc_types.h"
 
 G_BEGIN_DECLS
 
-#define GTAPECALC_TYPE_APPLICATION (gtapecalc_application_get_type())
+#define CALC_APPLICATION_TYPE (calc_application_get_type())
 
-struct _GTapeCalcApplication
+struct _CalcApplication
 {
-  GtkApplicationWindow gTapeCalcInstance;
+  GtkApplication calcApplication;
 
 };
 
-G_DECLARE_FINAL_TYPE (GTapeCalcApplication, gtapecalc_application, GTAPECALC, APPLICATION, GtkApplication)
+G_DECLARE_FINAL_TYPE (CalcApplication, calc_application, CALC, APPLICATION, GtkApplication)
+
+CalcApplication *
+calc_application_new ();
 
 G_END_DECLS

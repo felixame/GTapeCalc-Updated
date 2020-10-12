@@ -20,6 +20,7 @@
 #define __CALLBACKS_H__
 
 #include "gtc_types.h"
+#include "gtc_window.h"
 
 void close_app(GtkWidget *widget);
 

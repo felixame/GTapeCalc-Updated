@@ -64,7 +64,7 @@ typedef enum
 }ButtonType;
 
 
-typedef struct _CalcWindow CalcWindow;
+//typedef struct _CalcWindow CalcWindow;
 typedef struct _CalcButton CalcButton;
 typedef struct _PopupMenuEntry  PopupMenuEntry;
 typedef struct _ConfigVariable ConfigVariable;
@@ -74,29 +74,26 @@ typedef struct _CalcState CalcState;
 typedef struct _PrintOption PrintOption;
 
 
-struct _CalcWindow
-{
-  GtkWidget      *window;
-  GtkWidget      *headerBar;
-  GtkWidget      *entry;
-  GtkWidget      *clist;
-  GtkWidget      *scrolled_window;
-  //GtkItemFactory *item_factory;
-  GtkWidget      *statusbar;
-  gint           statusbar_id;
-  gint           nbuttons;
-  gint           selected_row;
-  gchar          *current_file;
-  CalcButton     *button_list;
-  CalcState      *state;
-  ConfigVariable *widget_vars;
-};
+// struct _CalcWindow
+// {
+//   GtkWidget      *window;
+//   GtkWidget      *headerBar;
+//   GtkWidget      *entry;
+//   GtkWidget      *clist;
+//   GtkWidget      *scrolled_window;
+//   gint           nbuttons;
+//   gint           selected_row;
+//   gchar          *current_file;
+//   CalcButton     *button_list;
+//   CalcState      *state;
+//   ConfigVariable *widget_vars;
+// };
 
 struct _CalcButton
 {
   gchar *label;
-  gint column;   /* left / right attach */
-  gint row;      /* top / bottom attach */
+  gint column;
+  gint row;
   GtkWidget *widget;
   gpointer*  sigfunc; // Pointer to function that handles button action.
   gchar *data;
