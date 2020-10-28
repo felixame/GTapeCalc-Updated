@@ -12,4 +12,4 @@ sources = files(
 	'gtc_window.c'
 	)
 
-executable('gtapecalc', sources, dependencies : gtkdep)
+executable('gtapecalc', sources, dependencies : gtkdep, install: true)

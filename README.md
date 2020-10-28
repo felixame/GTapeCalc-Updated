@@ -1,14 +1,1 @@
-# gtapecalcmod
-
-A fork of http://gtapecalc.sourceforge.net/, licensed under GPLv3.
-
-Fixed a couple issues that kept gtapecalc from being compiled on modern distros and brought it over to a modern build system. This is one of my first desktop oriented projects on Linux so I haven't bothered to include a .desktop file or to fix the application icon. Good chance those will come soon.
-
-### Building
-All that should be needed to build the project is
-
-`meson bin`
-
-`ninja -C bin`
-
-From there it can be run from `bin/src/gtapecalc`.
+# GTapeCalc Updated

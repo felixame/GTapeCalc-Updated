@@ -33,23 +33,21 @@
 #include "gtc_print.h"
 #include "../config.h"
 
+
 static GtkWidget *current_widget;
 static gchar     *current_file = '\0';
 static gchar     *current_dir = '\0';
 static gint       last_row = 0;
 
+
+
 void entry_backspace (GtkWidget *widget);
 void entry_show_keypress(GtkWidget *widget, gchar *num);
 
-/* basic app exit *********************************************************/
-void close_app(GtkWidget *widget)
-{
-  if (!delete_event (widget))
-  	gtk_main_quit();
-}
+
 
 /* toggles the visibility of the column titles *****************************/
-void column_toggle (GtkWidget *widget)
+void column_toggle (GtkWidget *widget, gpointer data)
 {
   static gint state = 0;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
@@ -65,42 +63,6 @@ void column_toggle (GtkWidget *widget)
   cw->widget_vars->column_title_show = state;
 }
 
-/* sets the number of decimal places to output ******************************/
-void dec_select(GtkWidget *widget, char *n)
-{
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
-  gint i = atoi(n);
-
-  if (GTK_CHECK_MENU_ITEM(widget)->active) {
-    if (!cw->state->misc_state) {
-      if (i < - 1) {
-        dlg_preferences_show (cw->window);
-      }
-      else cw->widget_vars->precision = i;
-    }
-    else cw->state->misc_state = 0;
-  }
-}
-
-/* quit function that checks for changed files ****************************/
-gint delete_event(GtkWidget *widget)
-{
-  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
-
-  if (strcmp(current_file,"Untitled")) {
-    if (!cw->state->file_saved) {
-      file_save_before_exit_cb (widget);
-
-      return (TRUE);
-    }
-  }
-
-  g_free (cw->widget_vars);
-  gtk_main_quit ();
-
-  return (FALSE);
-}
-
 /* toggle the floating point option in the preferences dialog *************/
 void fp_toggle (GtkWidget *widget, gpointer data)
 {
@@ -114,6 +76,50 @@ void fp_toggle (GtkWidget *widget, gpointer data)
       gtk_widget_set_sensitive (spinb, FALSE);
   }
   else gtk_widget_set_sensitive (spinb, TRUE);
+}
+
+/* basic app exit *********************************************************/
+
+void close_app(GtkWidget *widget, gpointer data)
+{
+  if (!delete_event (widget, data))
+  	gtk_main_quit();
+}
+
+/* quit function that checks for changed files ****************************/
+gint delete_event(GtkWidget *widget, gpointer data)
+{
+  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+
+  if (strcmp(current_file,"Untitled")) {
+    if (!cw->state->file_saved) {
+      file_save_before_exit_cb (widget, NULL);
+      return (TRUE);
+    }
+    /*else
+      gtk_main_quit();*/
+  }
+  /*else
+    gtk_main_quit();*/
+  g_free (cw->widget_vars);
+  gtk_main_quit ();
+  return (FALSE);
+}
+/* sets the number of decimal places to output ******************************/
+void dec_select(GtkWidget *widget, char *n)
+{
+  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+  gint i = atoi(n);
+
+  if (GTK_CHECK_MENU_ITEM(widget)->active) {
+    if (!cw->state->misc_state) {
+      if (i < - 1) {
+        dlg_preferences_show (cw->window, NULL);
+      }
+      else cw->widget_vars->precision = i;
+    }
+    else cw->state->misc_state = 0;
+  }
 }
 
 /* set whether the current file is saved or not *****************************/
@@ -144,7 +150,7 @@ void set_current_dir ()
 
   if (current_dir) {
     g_free (current_dir);
-    temp_dir = g_path_get_dirname (current_file);
+    temp_dir = g_dirname (current_file);
   }
   else
     temp_dir = g_get_current_dir ();
@@ -191,7 +197,9 @@ void file_select(GtkWidget *widget, char *mode)
   g_signal_connect (GTK_OBJECT(fs), "destroy",
 		      G_CALLBACK(gtk_widget_destroy),
 		      GTK_OBJECT(fs));
-
+  /*gtk_signal_connect (GTK_OBJECT(GTK_FILE_SELECTION(fs)->ok_button),
+ 		      "clicked", GTK_SIGNAL_FUNC(file_event),
+		      mode); */
   g_signal_connect_swapped (GTK_OBJECT(GTK_FILE_SELECTION(fs)->cancel_button),
 			     "clicked", G_CALLBACK(gtk_widget_destroy),
 			     GTK_OBJECT(fs));
@@ -253,7 +261,8 @@ void file_open(GtkWidget *widget, gpointer data)
     char *buffer[3];
     gchar *index;
 
-    new_tape_event(cw->clist);
+//    gtk_clist_freeze (GTK_CLIST(cw->clist));
+    new_tape_event(cw->clist, NULL);
 
     while (fgets (buff[0], 256, fname)) {
       buffer[0] = buff[0];
@@ -272,6 +281,7 @@ void file_open(GtkWidget *widget, gpointer data)
 
       row = tlist_append (cw->clist, buffer);
     }
+//    gtk_clist_thaw (GTK_CLIST(cw->clist));
 
     last_row = row;
     set_current_file(fn);
@@ -305,7 +315,7 @@ void file_save_event_cb (GtkWidget *widget, gchar *data)
 }
 
 /* check to see if a file exists before saving to it ************************/
-void file_save_as (GtkWidget *widget)
+void file_save_as (GtkWidget *widget, gchar *data)
 {
   FILE *fname;
   const gchar *tname;
@@ -451,7 +461,7 @@ int file_save_event(GtkWidget *widget, gchar *data)
 }
 
 /* prompts for the user to save before closing ******************************/
-void file_close_cb (GtkWidget *widget)
+void file_close_cb (GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
@@ -474,11 +484,11 @@ void file_close_cb (GtkWidget *widget)
 
     dialog_new (widget, &file_save_items, file_save_buttons);
   }
-  else new_tape_event (widget);
+  else new_tape_event (widget, NULL);
 }
 
 /* saves file, then clears the display **************************************/
-void file_save_before_close (GtkWidget *widget)
+void file_save_before_close (GtkWidget *widget, gpointer data)
 {
   int ret_val;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
@@ -487,12 +497,12 @@ void file_save_before_close (GtkWidget *widget)
   if (ret_val == 0) {
     set_current_file("Untitled");
     statusbar_update (cw->window, current_file, "");
-    new_tape_event (cw->window);
+    new_tape_event (cw->window, NULL);
   }
 }
 
 /* checks if file needs to be saved before exiting **************************/
-void file_save_before_exit_cb (GtkWidget *widget)
+void file_save_before_exit_cb (GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
@@ -516,10 +526,11 @@ void file_save_before_exit_cb (GtkWidget *widget)
     dialog_new (widget, &file_save_items, file_save_buttons);
   }
   else
+    /*close_app (NULL, NULL);*/
     gtk_main_quit ();
 }
 /* saves file, then exit ****************************************************/
-void file_save_before_exit (GtkWidget *widget)
+void file_save_before_exit (GtkWidget *widget, gpointer data)
 {
   gint ret_val = 0;
 
@@ -542,6 +553,7 @@ void print_file_cb (GtkWidget *widget, gpointer data)
   PrintOption *options;
   GtkWidget *rbutton;
   GtkWidget *entry;
+  /* GtkWidget *twidget = get_data_from_toplevel (widget, "twindow");*/
   GtkWidget *window = get_data_from_toplevel (widget, "twindow");
 
   options = g_new0 (PrintOption, 1);
@@ -577,17 +589,29 @@ void print_file_cb (GtkWidget *widget, gpointer data)
       options->custom_header = 1;
     }
     else
-      options->header = g_strdup (g_path_get_basename (current_file));
+      options->header = g_strdup (g_basename (current_file));
   }
   entry = gtk_object_get_data (GTK_OBJECT(window), "page_width_entry");
   options->page_width = atoi (gtk_entry_get_text (GTK_ENTRY(entry)));
   entry = gtk_object_get_data (GTK_OBJECT(window), "column_width_entry");
   options->column_width = atoi (gtk_entry_get_text (GTK_ENTRY(entry)));
 
+  /*
+  g_message ("print_command = %s\n", options->print_command);
+  g_message ("to_file_name = %s\n", options->to_file_name);
+  g_message ("header = %s\n", options->header);
+  g_message ("to_file = %i\n", options->to_file);
+  g_message ("print_header = %i\n", options->print_header);
+  g_message ("custom_header = %i\n", options->custom_header);
+  g_message ("page_width = %i\n", options->page_width);
+  g_message ("column_with = %i\n", options->column_width);
+  */
+
   print_file (window, options);
+  /*gtk_widget_destroy (window);*/
 }
 
-// TODO: Cleanup this function. It's hard to tell where each conditional ends.
+
 /* print clist to a temp file, then to lpr *********************************/
 void print_file(GtkWidget *widget, gpointer data)
 {
@@ -595,9 +619,11 @@ void print_file(GtkWidget *widget, gpointer data)
   FILE *fname;
   PrintOption *opts = data;
 
+  /*ConfigVariable *vars;*/
   gint column_width;
   gint page_width;
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+
 
   page_width = opts->page_width * 2;     /* multiply the widths to   */
   column_width = opts->column_width * 2; /* to account for the fonts */
@@ -609,15 +635,17 @@ void print_file(GtkWidget *widget, gpointer data)
   else {
     char temp_name[L_tmpnam];
 
-    // Changed tmpnam() to g_mkdtemp().
-    temp_file = g_mkdtemp(temp_name);
+    // Changed tmpnam() to mkdtemp().
+    temp_file = mkdtemp(temp_name);
   }
 
-  fname = fopen(temp_file, "w"); if (fname) {
+  fname = fopen(temp_file, "w");
+  if (fname) {
 
     char *buffer = "";
     char command[strlen(temp_file) + 8];
     gchar padded_string[page_width + 1];
+    /*gchar padded_spaces[column_width + 1];*/
     gint padding;
     gint row = 0;
     gint lines = 0;
@@ -625,23 +653,22 @@ void print_file(GtkWidget *widget, gpointer data)
     gint x, y;
 
     print_ps_header (fname);
-
     if (opts->print_header) {
       print_header (fname, opts->header, page);
     }
-    else
-      print_header (fname, "", page);
+    else print_header (fname, "", page);
 
     while (row <= last_row) {
 
       if (lines > 40) {
         print_footer (fname, page);
         page++;
+        /*fputs ("nlinepos \n", fname);*/
 
-	      if (opts->print_header)
-	        print_header (fname, opts->header, page);
-	      else
-	        print_header (fname, "", page);
+	if (opts->print_header)
+	  print_header (fname, opts->header, page);
+	else
+	  print_header (fname, "", page);
 
         print_start_pos (fname);
         lines = 0;
@@ -652,89 +679,94 @@ void print_file(GtkWidget *widget, gpointer data)
 
       x = y = 0;
       memset(padded_string, '\0', sizeof(padded_string));
+      /*memset(padded_spaces, '\0', sizeof(padded_spaces));*/
 
       padding = (column_width) - strlen(buffer);
 
       /* multi-line comment */
       if (padding < 0){
-	    gchar line[strlen(buffer) + 1];
+	gchar line[strlen(buffer) + 1];
 
-	    strcpy(line, buffer);
+	strcpy(line, buffer);
 
-	    while (x <= strlen(line)) {
-	      strncpy(padded_string, &line[x], column_width);
+	while (x <= strlen(line)) {
+	  strncpy(padded_string, &line[x], column_width);
+	  x += column_width;
+
+	  /* full line, wrap last word */
+	  if (strlen(padded_string) == column_width) {
+
+	    y = strlen(padded_string);
+
+	    /* if there's a space at the end, don't bother */
+	    while (padded_string[y] != ' ' &&
+		   padded_string[y + 1] != ' ' &&
+		   y > 0 &&
+		    strchr(padded_string, ' ')) {
+	      y--;
+	      x--;
+	    }
+
+	    if (y < sizeof(padded_string) && y > 0)
+	      padded_string[y + 1] = '\0';
+
+	    if (y == 0)
 	      x += column_width;
 
-	      /* full line, wrap last word */
-	      if (strlen(padded_string) == column_width) {
-
-	        y = strlen(padded_string);
-
-	        /* if there's a space at the end, don't bother */
-	        while (padded_string[y] != ' ' &&
-		            padded_string[y + 1] != ' ' &&
-		            y > 0 &&
-		            strchr(padded_string, ' ')) {
-	          y--;
-	          x--;
-	        }
-
-	        if (y < sizeof(padded_string) && y > 0)
-	          padded_string[y + 1] = '\0';
-
-	        if (y == 0)
-	          x += column_width;
-
-	        print_l_column (fname, padded_string);
-	        fputs ("nline ", fname);
-	        lines++;
-	      }
-	      else {
-	        print_l_column (fname, padded_string);
-	      }
+	    print_l_column (fname, padded_string);
+	    fputs ("nline ", fname);
+	    lines++;
+	  }
+	  else {
+	    print_l_column (fname, padded_string);
+	  }
+	}
       }
+
+      /* single line comment */
+      else {
+	print_l_column (fname, buffer);
+      }
+      g_free (buffer);
+
+      /* write output cells */
+      tlist_get_text (cw->clist, row, 1, &buffer);
+
+      print_rs_column (fname, buffer);
+      g_free (buffer);
+
+      /* write operator cells */
+      tlist_get_text (cw->clist, row, 2, &buffer);
+
+      print_r_column (fname, buffer);
+      g_free (buffer);
+
+      row++;
+      lines++;
+
     }
+    print_footer (fname, page);
+    /*print_showpage (fname);*/
 
-    // Single line comment
-    else {
-	    print_l_column (fname, buffer);
+    fclose(fname);
+
+    if (!opts->to_file && !opts->preview) {
+      sprintf(command, "%s %s", opts->print_command, temp_file);
+      system(command);
+      g_free (opts->print_command);
     }
-    g_free (buffer);
-
-    /* write output cells */
-    tlist_get_text (cw->clist, row, 1, &buffer);
-
-    print_rs_column (fname, buffer);
-    g_free (buffer);
-
-    /* write operator cells */
-    tlist_get_text (cw->clist, row, 2, &buffer);
-
-    print_r_column (fname, buffer);
-    g_free (buffer);
-
-    row++;
-    lines++;
-  }
-
-  print_footer (fname, page);
-  fclose(fname);
-
-  if (!opts->to_file && !opts->preview) {
-    sprintf(command, "%s %s", opts->print_command, temp_file);
-    system(command);
-    g_free (opts->print_command);
-  }
-  if (opts->preview) {
+    if (opts->preview) {
 #ifdef GSVIEWER
-    sprintf (command, "%s %s", GSVIEWER , temp_file);
-    system (command);
+
+      sprintf (command, "%s %s", GSVIEWER , temp_file);
+      system (command);
 #endif
+    }
+    else
+      statusbar_update (widget, current_file, " printed");
+
+    /*dlg_error_msg (widget, temp_file);*/  /* temp file name dialog */
   }
-  else
-    statusbar_update (widget, current_file, " printed");
-  }
-  // TODO: What's going on here?
   else {
     gchar *err_msg;
     char *str_err;
@@ -748,7 +780,6 @@ void print_file(GtkWidget *widget, gpointer data)
     dlg_error_msg (widget, err_msg);
     g_free (err_msg);
   }
-
   if (!opts->preview) {
     if (opts->print_header)
       g_free (opts->header);
@@ -780,10 +811,11 @@ void statusbar_update(GtkWidget *widget, gchar *open_file, gchar *text)
 }
 
 /* clears the variables and the output window *******************************/
-void new_tape_event(GtkWidget *widget)
+void new_tape_event(GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
+//  gtk_clist_freeze (GTK_CLIST(cw->clist));
   clear(widget, NULL);
   tlist_clear(cw->clist);
 
@@ -795,10 +827,21 @@ void new_tape_event(GtkWidget *widget)
   if (GTK_IS_DIALOG(widget))
     gtk_widget_destroy (GTK_WIDGET(widget));
 
+//  gtk_clist_thaw (GTK_CLIST(cw->clist));
 }
 
+/* callback for when a column is resized ************************************/
+/* void clist_column_resize (GtkWidget *widget, gpointer data)
+{
+  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+
+  gtk_clist_set_column_max_width (GTK_CLIST(cw->clist), 2, 40);
+}
+*/
+
 /* callback for when a row is selected **************************************/
-void select_row (GtkTreeView *tree, GtkTreePath *row)
+void select_row (GtkTreeView *tree, GtkTreePath *row,
+                GtkTreeViewColumn column, gpointer data)
 {
   GtkTreeViewColumn *first_column;
   GList *list = gtk_tree_view_get_columns (tree);
@@ -809,14 +852,15 @@ void select_row (GtkTreeView *tree, GtkTreePath *row)
   gtk_tree_view_set_cursor (tree, row, first_column, TRUE);
 
   g_list_free (list);
+  /*g_message ("select_row called");*/
 }
 
 /* remove a row in the output window ****************************************/
-void remove_row (GtkWidget *widget)
+void remove_row (GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
-  tlist_remove_row (cw->clist);
+  tlist_remove_row (cw->clist, cw->selected_row);
   last_row--;
 
   statusbar_update (widget, current_file, " not saved");
@@ -827,12 +871,13 @@ void remove_row (GtkWidget *widget)
 }
 
 /* insert a blank row into the output window ********************************/
-void insert_row (GtkWidget *widget)
+void insert_row (GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
   tlist_insert_row (cw->clist, cw->selected_row);
   last_row++;
+  /*gtk_clist_select_row (GTK_CLIST(out_clist), selected_row, 0);*/
 
   statusbar_update (widget, current_file, " not saved");
   set_file_saved (cw, FALSE);
@@ -851,13 +896,14 @@ void insert_comment(GtkWidget *widget)
 
   tlist_set_text (cw->clist, cw->selected_row, 0, new_comment);
   gtk_entry_set_text (GTK_ENTRY(dlg_entry), "");
+ // gtk_clist_unselect_row (GTK_CLIST(cw->clist), cw->selected_row, -1);
   statusbar_update(widget, current_file, " not saved");
   gtk_widget_destroy (GTK_WIDGET(widget));
   set_file_saved (cw, FALSE);
 }
 
 /* remove comment from the output window ************************************/
-void remove_comment (GtkWidget *widget)                                                          //
+void remove_comment (GtkWidget *widget, gpointer data)                                                          //
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
@@ -866,9 +912,8 @@ void remove_comment (GtkWidget *widget)                                         
   set_file_saved (cw, FALSE);
 }
 
-// TODO: Is this called anywhere?
 /* dummy handler ************************************************************/
-void de_fault(GtkWidget *widget)
+void de_fault(GtkWidget *widget, gpointer data)
 {
   gchar *temp_str;
 
@@ -883,32 +928,38 @@ void de_fault(GtkWidget *widget)
   printf ("Current dir - %s\n", temp_str);
   g_free (temp_str);
 
-  temp_str = g_path_get_dirname (current_file);
+  temp_str = g_dirname (current_file);
   printf ("CWD - %s\n", temp_str);
   g_free (temp_str);
+
 }
 
 /* register if mouse is over a button ***************************************/
-gint button_enter(GtkWidget *widget)
+gint button_enter(GtkWidget *widget, GdkEventButton *event,  gchar *data)
 {
   current_widget = widget;
   return(FALSE);
 }
 
 /* update current_button ****************************************************/
-gint button_leave (GtkWidget *widget)
+gint button_leave (GtkWidget *widget, GdkEventButton *event, gchar *data)
 {
   current_widget = NULL;
   return(FALSE);
 }
 
 /* Check to see if the key pressed corresponds to a button ******************/
-guint key_press_event (GtkWidget *widget, GdkEventKey *event)
+guint key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
   ButtonType btype;
   GtkWidget *focus_widget;
+  /*const gchar *type_name;*/
 
   focus_widget = gtk_window_get_focus (GTK_WINDOW(widget));
+  /********************************************
+  type_name= GTK_OBJECT_TYPE_NAME(focus_widget);
+  g_print ("widget_type is: %s\n", type_name);
+  *********************************************/
 
   if (GTK_IS_ENTRY(focus_widget)) {
     return FALSE;
@@ -923,12 +974,18 @@ guint key_press_event (GtkWidget *widget, GdkEventKey *event)
 }
 
 /* Check the key that was released ******************************************/
-guint key_release_event(GtkWidget *widget, GdkEventKey *event)
+guint key_release_event(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
   ButtonType btype;
   GtkWidget *focus_widget;
+  /*const gchar *type_name;*/
 
   focus_widget = gtk_window_get_focus (GTK_WINDOW(widget));
+
+  /*********************************************
+  type_name= GTK_OBJECT_TYPE_NAME(focus_widget);
+  g_print ("widget_type is: %s\n", type_name);
+  **********************************************/
 
   if (GTK_IS_ENTRY(focus_widget)) {
     return FALSE;
@@ -957,23 +1014,25 @@ void key_press_button (GtkWidget *widget, ButtonType button, guint is_pressed)
     if (button == button_list[index].type) {
 
       if (is_pressed) {
-	      if (button_list[index].widget != current_widget) {
-	        gtk_button_enter (GTK_BUTTON(button_list[index].widget));
-	        gtk_button_clicked (GTK_BUTTON(button_list[index].widget));
-	      }
-	      gtk_button_pressed (GTK_BUTTON(button_list[index].widget));
+	//gdk_key_repeat_disable ();
+	//gtk_button_clicked (GTK_BUTTON(button_list[index].widget));
+	if (button_list[index].widget != current_widget) {
+	  gtk_button_enter (GTK_BUTTON(button_list[index].widget));
+	  gtk_button_clicked (GTK_BUTTON(button_list[index].widget));
+	}
+	gtk_button_pressed (GTK_BUTTON(button_list[index].widget));
       }
       else {
-	      gtk_button_released (GTK_BUTTON(button_list[index].widget));
+	//gdk_key_repeat_restore ();
+	// 2.0 Change
 
-	      if (button_list[index].widget != current_widget) {
-	        gtk_button_leave (GTK_BUTTON(button_list[index].widget));
-        }
+	gtk_button_released (GTK_BUTTON(button_list[index].widget));
+	if (button_list[index].widget != current_widget)
+	  gtk_button_leave (GTK_BUTTON(button_list[index].widget));
       }
     }
   }
 }
-
 /* process keystrokes from the entry widget *********************************/
 int key_event(GtkWidget *widget, gint keyval, gint is_pressed)
 {
@@ -1088,8 +1147,14 @@ void display_out(GtkWidget *widget, char *output, char *op)
 
   last_row = tlist_append (cw->clist, text);
 
+  //tlist_scroll_to_row (cw->clist, last_row);
+
   statusbar_update (widget, current_file, " not saved");
   set_file_saved (cw, FALSE);
+  /*if (*output)
+    cw->selected_row = last_row;
+  else cw->selected_row = last_row - 1;
+  */
 }
 
 /* deletes the last number from the entry label *****************************/
@@ -1130,7 +1195,7 @@ void entry_backspace (GtkWidget *widget)
 }
 
 /* clear the entry **********************************************************/
-void entry_clear (GtkWidget *widget)
+void entry_clear (GtkWidget *widget, gpointer data)
 {
   CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
 
@@ -1161,7 +1226,7 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
   else {
     fprintf (stderr,
 	     "error:(callbacks.c (1115)strlen of current num is - %d\n",
-	     (int)strlen(current_num));
+	     strlen(current_num));
     return;
   }
 
@@ -1170,6 +1235,8 @@ void entry_show_keypress(GtkWidget *widget, gchar*num)
 
   len = strlen(new_num);
   index = &new_num[len];
+  /*new_num[len] = num;
+    new_num[len+1] = 0;*/
   strcpy (index, num);
 
   if (!cw->state->in_sub)
@@ -1208,6 +1275,11 @@ void button_press(GtkWidget *widget, ButtonType *data)
     return;
   }
 
+  /*if (cw->state->clear_entry) {
+    gtk_label_set (GTK_LABEL(cw->entry), "");
+    cw->state->clear_entry = 0;
+  }*/
+
   /*if (*data == BTN_PAREN_LEFT || *data == BTN_PAREN_RIGHT)*/
   if (*data == BTN_PAREN_LEFT) {
   	gtk_label_set (GTK_LABEL(cw->entry), "");
@@ -1235,12 +1307,14 @@ void button_press(GtkWidget *widget, ButtonType *data)
 }
 
 /* load the options from the preferences dialog ****************************/
-void load_dialog_options (GtkWidget *widget)
+void load_dialog_options (GtkWidget *widget, gpointer data)
 {
   GList *toplevels;
   const gchar *tname;
-  gchar *name;
+  gchar           *name;
+  //GtkStyle *style;
   gint i;
+  //GdkFont *font;
   GList *container;
   GtkWidget *label;
   GtkWidget *temp_widget;
@@ -1270,7 +1344,8 @@ void load_dialog_options (GtkWidget *widget)
   }
 
   data_widget = gtk_object_get_data (GTK_OBJECT(widget), "show_headers");
-  temp_widget = gtk_item_factory_get_widget (cw->item_factory, "/View/Show Headers");
+  temp_widget = gtk_item_factory_get_widget (cw->item_factory,
+	  "/View/Show Headers");
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_widget))) {
     if (!cw->widget_vars->column_title_show) {
       gtk_check_menu_item_set_state (GTK_CHECK_MENU_ITEM(temp_widget),
@@ -1297,15 +1372,33 @@ void load_dialog_options (GtkWidget *widget)
 
   data_widget = gtk_object_get_data (GTK_OBJECT(widget), "entry_font");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
-
   if (name[0] != '\0') {
   	name = g_strdup (tname);
-    cw->widget_vars->entry_font_name =
-      config_load_var (cw->widget_vars->entry_font_name, name);
-    widget_font_load (cw->entry, cw->widget_vars->entry_font_name);
-
-    g_free (name);
+    cw->widget_vars->entry_font_name = config_load_var
+      (cw->widget_vars->entry_font_name, name);
+      widget_font_load (cw->entry, cw->widget_vars->entry_font_name);
+    //font = gdk_font_load (cw->widget_vars->entry_font_name);
+    //if (font) {
+      //style = gtk_style_copy (gtk_widget_get_style (cw->entry));
+      //style->font = font;
+      //gtk_widget_set_style (GTK_WIDGET(cw->entry), style);
+      /*gtk_style_unref (style);*/
+      //gtk_widget_hide (GTK_WIDGET(cw->entry));
+      //gtk_widget_show (GTK_WIDGET(cw->entry));
+    //}
+    //else g_warning ("Couldn't load entry font %s\nusing default gtk font instead",
+     //               cw->widget_vars->entry_font_name);
+     g_free (name);
   }
+  /*else cw->widget_vars->entry_font_name = "";*/
+  /* else {
+    if (cw->widget_vars->entry_font_name) {
+      free (cw->widget_vars->entry_font_name);
+      cw->widget_vars->entry_font_name = NULL;
+    }
+    }*/
+  // 2.0 Change
+
 
   data_widget = gtk_object_get_data (GTK_OBJECT(widget), "tape_font");
   tname = gtk_entry_get_text (GTK_ENTRY(data_widget));
@@ -1314,7 +1407,17 @@ void load_dialog_options (GtkWidget *widget)
     cw->widget_vars->clist_font_name = config_load_var
       (cw->widget_vars->clist_font_name, name);
     widget_font_load (cw->clist, cw->widget_vars->clist_font_name);
-
+    /*font = gdk_font_load (cw->widget_vars->clist_font_name);
+      if (font) {
+      style = gtk_style_copy (gtk_widget_get_style (cw->clist->parent));
+      style->font = font;
+      gtk_widget_set_style (GTK_WIDGET(cw->clist), style);*/
+    /*gtk_style_unref (style);*/
+    /*gtk_widget_hide (GTK_WIDGET(cw->clist));
+      gtk_widget_show (GTK_WIDGET(cw->clist));
+      }
+      else g_warning ("Couldn't load output font %s\nusing default gtk font instead",
+      cw->widget_vars->clist_font_name);*/
     g_free (name);
   }
   else {
@@ -1413,6 +1516,30 @@ void load_dialog_options (GtkWidget *widget)
   destroy_dialog (widget, NULL);
 }
 
+
+/* Test for getting hpaned size ********************************************/
+/*void get_pane_size (GtkWidget *widget, gpointer data)
+{
+  gint xsize = 0;
+  gint ysize = 0;
+  CalcWindow *cw = get_data_from_toplevel (widget, "cwindow");
+
+  gdk_window_get_size (cw->clist->window, &xsize, &ysize);
+  g_message ("clist window size is %i %i", xsize, ysize);
+
+  gdk_window_get_size (cw->entry->window, &xsize, &ysize);
+  g_message ("entry window size is %i %i", xsize, ysize);
+  cw->widget_vars->pane_width = (xsize + 14);
+
+  gdk_window_get_size (cw->scrolled_window->window, &xsize, &ysize);
+  g_message ("scrolled window size is %i %i", xsize, ysize);
+
+  gdk_window_get_size (cw->window->window, &xsize, &ysize);
+  g_message ("main window size is %d %d \n", xsize, ysize);
+  cw->widget_vars->win_x_size = xsize;
+  cw->widget_vars->win_y_size = ysize;
+}
+*/
 /* Determine in clist mouse clicks ******************************************/
 guint mouse_click_check (GtkWidget *widget, GdkEventButton *event,
 			gpointer data)
@@ -1425,8 +1552,7 @@ guint mouse_click_check (GtkWidget *widget, GdkEventButton *event,
   return (FALSE);
 }
 
-//TODO: Get this working on Gnome 3.
-void show_help (GtkWidget *widget)
+void show_help (GtkWidget *widget, gpointer data)
 {
 #ifdef GNOME_HELP_BROWSER
   gchar *command;
@@ -1543,7 +1669,7 @@ void tlist_clear (GtkWidget *tlist)
 }
 
 /* remove a row in the list ***********************************/
-void tlist_remove_row (GtkWidget *tlist)
+void tlist_remove_row (GtkWidget *tlist, gint row)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -1561,6 +1687,8 @@ void tlist_insert_row (GtkWidget *tlist, gint row)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
+
+  //g_print ("insert_row: %d\n", row);
 
   model = gtk_tree_view_get_model (GTK_TREE_VIEW(tlist));
 
@@ -1583,7 +1711,9 @@ void tlist_scroll_to_row (GtkTreeView *tree, GtkTreeModel *model, GtkTreeIter *i
 }
 
 void
-cell_changed (gchar *arg1, gchar *arg2, gpointer data)
+cell_changed (GtkCellRendererText *cell,
+	      gchar *arg1, gchar *arg2,
+	      gpointer data)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -1608,7 +1738,7 @@ cell_changed (gchar *arg1, gchar *arg2, gpointer data)
   if (gtk_tree_selection_get_selected (select, &model, &iter))
     {
       while (gtk_tree_model_iter_next (model, &iter)) {
-	      ++count;
+	++count;
       }
       cw->selected_row = last_row - count;
 

@@ -25,8 +25,10 @@
 #include "gtc_utils.h"
 #include "gtc_callbacks.h"
 
+void dlg_set_radio_entry_insensitive (GtkWidget *widget, gpointer data);
+
 /* dialog for adding comments to the output window *************************/
-void edit_tape_dialog (GtkWidget *widget)
+void edit_tape_dialog (GtkWidget *widget, gpointer data)
 {
   /*extern gint selected_row;*/
   GtkWidget *twindow;
@@ -225,7 +227,7 @@ void dlg_error_msg (GtkWidget *widget, gchar *err_str)
 }
 
 /* delete line dialog *******************************************************/
-void dlg_delete_line (GtkWidget *widget)
+void dlg_delete_line (GtkWidget *widget, gpointer data)
 {
   DialogItem dlg_items = {
     NULL,
@@ -245,7 +247,7 @@ void dlg_delete_line (GtkWidget *widget)
 }
 
 /* shows the about dialog ***************************************************/
-void show_about(GtkWidget *widget)
+void show_about(GtkWidget *widget, gpointer data)
 {
   gchar *title_string = g_malloc0 (256 * sizeof(gchar));
 
@@ -272,7 +274,7 @@ void show_about(GtkWidget *widget)
 }
 
 /* preferences dialog ******************************************************/
-void dlg_preferences_show (GtkWidget *widget)
+void dlg_preferences_show (GtkWidget *widget, gpointer data)
 {
   /*static guint init = 0;*/
   GtkWidget *window;
@@ -553,7 +555,7 @@ void dlg_preferences_show (GtkWidget *widget)
 }
 
 /* Show the print dialog ***************************************************/
-void dlg_print (GtkWidget *widget)
+void dlg_print (GtkWidget *widget, gpointer data)
 {
   GtkWidget *window;
   GtkWidget *vbox, *vbox2, *hbox, *hbox2;
@@ -749,7 +751,7 @@ void dlg_print (GtkWidget *widget)
 }
 
 /* Sets the associated entry of a radio button insensitive *****************/
-void dlg_set_radio_entry_insensitive (GtkWidget *widget)
+void dlg_set_radio_entry_insensitive (GtkWidget *widget, gpointer data)
 {
   GtkWidget *entry;
 
