@@ -15,31 +15,78 @@
  *                                                                         *
  ***************************************************************************/
 
-
+#pragma once
 #ifndef __CALC_H__
 #define __CALC_H__
 
 #include "gtc_types.h"
 
-
 #define MAX_ENTRY 64
 #define MAX_STRING (MAX_ENTRY + (MAX_ENTRY / 3))
 
+G_BEGIN_DECLS
 
+#define CALC_TYPE_VALUES calc_values_get_type ()
+#define CALC_TYPE_MACHINE calc_machine_get_type ()
+G_DECLARE_FINAL_TYPE (CalcValues, calc_values, CALC, VALUES, GObject)
+G_DECLARE_FINAL_TYPE (CalcMachine, calc_machine, CALC, MACHINE, GObject)
 
-void parse_main_input (GtkWidget *widget, ButtonType btn_type);
+struct _CalcValues
+{
+  GObject parent;
 
-CalcType parse_input(CalcValues *values, ButtonType btype, gchar *entry_data);
+  double total;
+  double val1;
+  double val2;
+  ButtonType opbuf;
+  ButtonType op;
+  unsigned int val1flag;
+  char  *text;
+};
 
-CalcType parse_sub_input (CalcValues *values, ButtonType btype, gchar *entry_data);
+struct _CalcMachine
+{
+  GObject parent;
 
-void parse_grouped_input (GtkWidget *widget, ButtonType btn_type);
+  CalcValues *mainval;
+  CalcValues *subval;
+  unsigned int skip_output;
+  CalcState calcState;
+};
 
-void parse_output (GtkWidget *widget, CalcValues *values, CalcType type);
+G_DEFINE_TYPE (CalcValues, calc_values, G_TYPE_OBJECT)
+G_DEFINE_TYPE (CalcMachine, calc_machine, G_TYPE_OBJECT)
 
-void clear(GtkWidget *widget, gpointer data);
+G_END_DECLS
+
+void
+parse_main_input (CalcMachine *self,
+                  ButtonType btn_type,
+									char *calcEntryText);
+CalcType
+parse_sub_input (CalcValues *values,
+                 ButtonType btype,
+                 gchar *entry_data);
+
+CalcType
+parse_input(CalcValues *values,
+            ButtonType btype,
+            gchar *entry_data);
+
+void
+parse_grouped_input (CalcMachine *self,
+                     ButtonType btn_type,
+										 gchar *calcEntryString);
+
+int
+calculate (CalcValues *vals);
+
+void
+parse_output (CalcValues *values,
+              CalcType type);
+
+void
+calc_machine_clear (self *CalcMachine);
 
 #endif /* __CALC_H__ */
-
-
 

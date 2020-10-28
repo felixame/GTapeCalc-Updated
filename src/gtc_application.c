@@ -1,10 +1,25 @@
+/* myo-window.c
+ *
+ * Copyright 2020 Felix
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <gtk/gtk.h>
 
 #include "gtc_application.h"
 #include "gtc_window.h"
-
-#include "gtc_callbacks.h"
-#include "gtc_prefs.h"
 
 #include "../config.h"
 
@@ -30,11 +45,8 @@ calc_application_activate (GApplication *calcApplication)
 {
 	CalcWindow *calcWindow;
 
-	calcWindow = g_object_new (
-													CALC_WINDOW_TYPE,
-		            					"application", calcApplication,
-		                      NULL
-													);
+	calcWindow = calc_window_new (calcApplication);
+	CALC_APPLICATION (calcApplication)->calcWindow = calcWindow;
 
 	gtk_window_present (GTK_WINDOW (calcWindow));
 
@@ -43,9 +55,9 @@ calc_application_activate (GApplication *calcApplication)
 	// original GTapeCalc uses so we'll be keeping compatibility with previously
 	// created tape files.
 
-	//file_new ();
-
-	gtk_header_bar_set_subtitle(calcWindow->headerBar, "Name of Current Open File Goes Here");
+	// file_new ();
+	// it will do something like this along with file stuff.
+	gtk_header_bar_set_subtitle(calcWindow->calcHeaderBar, "Name of Current Open File Goes Here");
 
 }
 
@@ -64,7 +76,7 @@ calc_application_init (CalcApplication *self)
 CalcApplication *
 calc_application_new ()
 {
-  return g_object_new (CALC_APPLICATION_TYPE,
+  return g_object_new (CALC_TYPE_APPLICATION,
                        "application-id", APPLICATION_ID,
 											 "flags", G_APPLICATION_FLAGS_NONE,
                        NULL);

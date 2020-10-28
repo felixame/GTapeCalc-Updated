@@ -20,6 +20,9 @@
 
 #include <gtk/gtk.h>
 
+#include "gtc_application.h"
+#include "gtc_window.h"
+
 typedef enum
 {
   NO_OUTPUT,
@@ -32,6 +35,32 @@ typedef enum
   SUB_TOTAL,
   OP_ERROR
 } CalcType;
+
+// typedef struct
+// {
+//   GtkWidget      *window;
+//   GtkWidget      *headerBar;
+//   GtkWidget      *entry;
+//   GtkWidget      *clist;
+//   GtkWidget      *scrolled_window;
+//   gint           nbuttons;
+//   gint           selected_row;
+//   gchar          *current_file;
+//   CalcButton     *button_list;
+//   CalcState      *state;
+//   ConfigVariable *widget_vars;
+// } CalcWindow;
+
+// typedef struct
+// {
+//   gchar *label;
+//   gint column;
+//   gint row;
+//   GtkWidget *widget;
+//   gpointer*  sigfunc; // Pointer to function that handles button action.
+//   gchar *data;
+//   ButtonType type;
+// } CalcButton;
 
 typedef enum
 {
@@ -55,58 +84,19 @@ typedef enum
   BTN_PERCENT,
   BTN_EQUAL,
   BTN_X_SQUARED,
-  BTN_PLUS_MINUS,
-  /*BTN_SQUARE_ROOT,*/
-  /*BTN_X_SQUARED_Y,*/
+  BTN_NEGATE,
   BTN_CLEAR_ALL,
   BTN_CLEAR_ENTRY,
   BTN_NONE
-}ButtonType;
+} ButtonType;
 
-
-//typedef struct _CalcWindow CalcWindow;
-typedef struct _CalcButton CalcButton;
-typedef struct _PopupMenuEntry  PopupMenuEntry;
-typedef struct _ConfigVariable ConfigVariable;
-typedef struct _ConfigOption ConfigOption;
-typedef struct _CalcValues CalcValues;
-typedef struct _CalcState CalcState;
-typedef struct _PrintOption PrintOption;
-
-
-// struct _CalcWindow
+// struct _PopupMenuEntry
 // {
-//   GtkWidget      *window;
-//   GtkWidget      *headerBar;
-//   GtkWidget      *entry;
-//   GtkWidget      *clist;
-//   GtkWidget      *scrolled_window;
-//   gint           nbuttons;
-//   gint           selected_row;
-//   gchar          *current_file;
-//   CalcButton     *button_list;
-//   CalcState      *state;
-//   ConfigVariable *widget_vars;
+//   const gchar *label;
+//   GCallback sigfunc;
 // };
 
-struct _CalcButton
-{
-  gchar *label;
-  gint column;
-  gint row;
-  GtkWidget *widget;
-  gpointer*  sigfunc; // Pointer to function that handles button action.
-  gchar *data;
-  ButtonType type;
-};
-
-struct _PopupMenuEntry
-{
-  const gchar *label;
-  GCallback sigfunc;
-};
-
-struct _ConfigVariable
+typedef struct
 {
   gint   win_x_size;
   gint   win_y_size;
@@ -119,36 +109,25 @@ struct _ConfigVariable
   gint   page_width;
   gint   column_width;
   gint   precision;
-};
+} ConfigVariable;
 
-struct _ConfigOption
+typedef struct
 {
   gchar *name;
   gchar *str_val;
   gint   int_val;
-};
+} ConfigOption;
 
-struct _CalcValues
-{
-  double total;
-  double val1;
-  double val2;
-  ButtonType   opbuf;
-  ButtonType   op;
-  unsigned int val1flag;
-  char  *text;
-};
-
-struct _CalcState
+typedef struct
 {
   unsigned int file_saved :1;
   unsigned int clear_entry :1;
   unsigned int in_sub :1;
   unsigned int have_sub :1;
   unsigned int misc_state :1;
-};
+} CalcState;
 
-struct _PrintOption
+typedef struct
 {
   char *print_command;
   char *to_file_name;
@@ -159,7 +138,7 @@ struct _PrintOption
   unsigned int print_header :1;
   unsigned int custom_header :1;
   unsigned int preview :1;
-};
+} PrintOption;
 
 
 #endif /* __GTC_TYPES_H__ */

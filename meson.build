@@ -7,8 +7,9 @@ project('gtapecalcmod', 'c',
 )
 
 add_project_arguments([
-	'-I' + meson.build_root(),
-], language: 'c')
+	'-rdynamic',
+	'-I' + meson.build_root()
+	], language: 'c')
 
 subdir('src')
 

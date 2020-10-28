@@ -20,14 +20,17 @@
 
 #include <gtk/gtk.h>
 
+#include "gtc_window.h"
+
 G_BEGIN_DECLS
 
-#define CALC_APPLICATION_TYPE (calc_application_get_type())
+#define CALC_TYPE_APPLICATION (calc_application_get_type())
 
 struct _CalcApplication
 {
-  GtkApplication calcApplication;
+  GtkApplication parent;
 
+  CalcWindow *calcWindow;
 };
 
 G_DECLARE_FINAL_TYPE (CalcApplication, calc_application, CALC, APPLICATION, GtkApplication)

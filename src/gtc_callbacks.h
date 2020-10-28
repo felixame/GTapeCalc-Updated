@@ -21,6 +21,25 @@
 
 #include "gtc_types.h"
 #include "gtc_window.h"
+#include "gtc_calc.h"
+
+void
+calc_entry_push_text (gchar *);
+
+void
+calc_entry_clear ();
+
+void
+calc_entry_set_text (gchar *);
+
+void
+calc_list_push(char *output,
+               char *op);
+
+void
+button_press(CalcMachine*,
+             ButtonType data);
+
 
 void close_app(GtkWidget *widget);
 
@@ -64,10 +83,6 @@ void file_close_cb (GtkWidget *widget);
 
 void entry_clear (GtkWidget *widget);
 
-gint button_enter(GtkWidget *widget);
-
-gint button_leave (GtkWidget *widget);
-
 guint key_press_event (GtkWidget *widget, GdkEventKey *event);
 
 guint key_release_event(GtkWidget *widget, GdkEventKey *event);
@@ -90,11 +105,9 @@ void insert_comment(GtkWidget *widget);
 
 void remove_comment (GtkWidget *widget);
 
-void button_press(GtkWidget *widget, ButtonType *data);
 
-void display_out(GtkWidget *widget, char *output, char *op);
 
-void entry_show_total(GtkWidget *widget, double total);
+
 
 void load_dialog_options (GtkWidget *widget);
 
@@ -124,5 +137,8 @@ void tlist_scroll_to_row (GtkTreeView *tree, GtkTreeModel *model, GtkTreeIter *i
 void cell_changed (gchar *arg1, gchar *arg2, gpointer data);
                          
 void selection_changed (GtkTreeSelection *select, gpointer data);
+
+void entry_backspace (GtkWidget *widget);
+void entry_show_keypress (GtkWidget *widget, gchar *num);
 
 #endif /* __CALLBACKS_H__ */
